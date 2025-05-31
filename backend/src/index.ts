@@ -3,16 +3,23 @@ import express, { NextFunction, Request, Response } from "express";
 import env from "./utils/validateEnv";
 import { z } from "zod";
 import cors from "cors";
+import createHttpError, { isHttpError } from "http-errors";
+import cookieParser from "cookie-parser";
+import authRouter from "./routes/auth.router";
 
 export const app = express();
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
+
 app.get("/", (req, res) => {
   res.send("hii there");
 });
 
+app.use("/api/auth", authRouter);
+
 app.use((req, res, next) => {
-  res.status(404).json({ message: "Page not found" });
+  next(createHttpError(404, "Page not found"));
 });
 
 app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
@@ -27,6 +34,8 @@ app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
       message: issue.message,
     }));
 
+    console.log(errors);
+
     res
       .status(400)
       .json({ success: false, message: "Validation error", errors });
@@ -34,12 +43,13 @@ app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
   }
 
   // handling http errors
-  if (error instanceof Error) {
+  if (isHttpError(error)) {
     if ("status" in error && typeof error.status === "number") {
       statusCode = error.status;
     }
     errorMessage = error.message;
     stack = env.NODE_ENV === "development" ? error.stack : undefined;
+    console.log(error);
   }
 
   res.status(statusCode).json({
