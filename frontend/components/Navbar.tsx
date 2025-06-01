@@ -4,7 +4,7 @@ import { Toggle } from "./Toggle";
 
 export default function Navbar() {
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-6 relative z-10">
       <div className="flex justify-between items-center">
         <div className="">
           <h1 className="text-4xl font-bold hover:bg-gradient-to-r hover:from-yellow-400 hover:via-orange-400 hover:to-red-600 bg-transparent hover:bg-clip-text hover:text-transparent cursor-pointer transition-all duration-500">

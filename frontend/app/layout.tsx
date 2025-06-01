@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import AnimatedBlobs from "@/components/Blob";
 
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
@@ -31,15 +32,21 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${bricolage.variable} antialiased dark:bg-black/95 dark:text-white`}
+        className={`${bricolage.variable} antialiased dark:bg-black/95 dark:text-white font-bricolage overflow-x-hidden`}
       >
+        <div className="h-screen w-screen fixed -z-50 pointer-events-none">
+          <AnimatedBlobs />
+        </div>
+
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <div className="relative z-10 min-h-screen transition-colors duration-300 ease-in-out">
+            {children}
+          </div>
         </ThemeProvider>
       </body>
     </html>
