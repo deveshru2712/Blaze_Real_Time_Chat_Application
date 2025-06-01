@@ -1,10 +1,9 @@
-import { json, RequestHandler } from "express";
+import { RequestHandler } from "express";
 import { SignInType, SignUpType } from "../utils/schema/AuthSchema";
 import createHttpError from "http-errors";
 import prismaClient from "../utils/prismaClient";
 import bcrypt from "bcryptjs";
 import genToken from "../utils/genToken";
-import env from "../utils/validateEnv";
 
 export const signUp: RequestHandler<
   unknown,
