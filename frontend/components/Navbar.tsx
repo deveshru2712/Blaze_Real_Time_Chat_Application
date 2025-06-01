@@ -2,13 +2,15 @@ import Link from "next/link";
 import React from "react";
 import { Toggle } from "./Toggle";
 
-const Navbar = () => {
+export default function Navbar() {
   return (
     <div className="max-w-7xl mx-auto p-6">
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-4xl font-semibold">
-            <Link href={"/"}>Blaze 🔥</Link>
+        <div className="">
+          <h1 className="text-4xl font-bold hover:bg-gradient-to-r hover:from-yellow-400 hover:via-orange-400 hover:to-red-600 bg-transparent hover:bg-clip-text hover:text-transparent cursor-pointer transition-all duration-500">
+            <Link href={"/"}>
+              Blaze <span className="text-black">🔥</span>
+            </Link>
           </h1>
         </div>
         <div>
@@ -17,6 +19,4 @@ const Navbar = () => {
       </div>
     </div>
   );
-};
-
-export default Navbar;
+}
