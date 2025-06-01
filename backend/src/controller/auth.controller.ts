@@ -1,4 +1,4 @@
-import { RequestHandler } from "express";
+import { json, RequestHandler } from "express";
 import { SignInType, SignUpType } from "../utils/schema/AuthSchema";
 import createHttpError from "http-errors";
 import prismaClient from "../utils/prismaClient";
@@ -119,6 +119,14 @@ export const logOut: RequestHandler = (req, res, next) => {
     res.status(200).json({
       message: "Logged out successfully",
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const verify: RequestHandler = async (req, res, next) => {
+  try {
+    res.status(200).json({ user: req.user });
   } catch (error) {
     next(error);
   }
