@@ -59,7 +59,3 @@ app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
   });
   return;
 });
-
-app.listen(env.PORT, () => {
-  console.log("Backend is running on the server:", env.PORT);
-});

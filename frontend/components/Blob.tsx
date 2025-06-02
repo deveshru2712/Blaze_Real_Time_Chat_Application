@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 
-const AnimatedBlobs = () => {
+export default function AnimatedBlobs() {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -175,6 +175,4 @@ const AnimatedBlobs = () => {
       />
     </div>
   );
-};
-
-export default AnimatedBlobs;
+}
