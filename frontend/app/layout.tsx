@@ -32,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${bricolage.variable} antialiased dark:bg-black/95 dark:text-white font-bricolage overflow-x-hidden`}
+        className={`${bricolage.variable} antialiased dark:bg-black/95 dark:text-white overflow-x-hidden`}
       >
         <div className="h-screen w-screen fixed -z-50 pointer-events-none">
           <AnimatedBlobs />
