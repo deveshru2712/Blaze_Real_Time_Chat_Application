@@ -4,11 +4,13 @@ import Sidebar from "@/components/Sidebar";
 
 export default function Page() {
   return (
-    <div className="w-screen h-screen">
+    <div className="w-screen h-screen overflow-hidden flex flex-col">
       <Navbar />
-      <div className="flex border-t">
+      <div className="flex flex-1 w-full border-t overflow-hidden">
         <Sidebar />
-        <Message />
+        <div className="flex-1 h-full overflow-hidden">
+          <Message />
+        </div>
       </div>
     </div>
   );

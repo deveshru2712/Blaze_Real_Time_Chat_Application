@@ -4,8 +4,8 @@ import React from "react";
 interface MessageBoxProps {
   username: string;
   profileImg: string;
-  latestMessage: string;
-  time: string;
+  latestMessage?: string;
+  time?: string;
 }
 
 export default function MessageBox({
@@ -20,7 +20,7 @@ export default function MessageBox({
 
       <div className="absolute inset-1 -z-10 bg-slate-400 group-hover:bg-gradient-to-r group-hover:from-orange-400 group-hover:to-red-400/90 rounded-md transition-colors duration-500" />
 
-      <div className="flex gap-5 inset-1.5 bg-white dark:bg-black  absolute z-10 rounded-md px-2 py-2 ">
+      <div className="flex gap-5 inset-1.5 bg-white dark:bg-black  absolute z-10 rounded-md px-2 py-2">
         <Image
           src={profileImg}
           alt="profile-image"
@@ -31,9 +31,13 @@ export default function MessageBox({
         <div className="w-full flex flex-col">
           <div className="flex justify-between">
             <h2 className="dark:text-white">{username}</h2>
-            <span className="text-slate-400">{time}</span>
+            <span className="text-slate-400 hidden md:block">{time}</span>
           </div>
-          <div className="dark:text-white/80">{latestMessage}</div>
+          <div className="dark:text-white/80">
+            {latestMessage && latestMessage.length > 35
+              ? `${latestMessage.slice(0, 35)}...`
+              : latestMessage || ""}
+          </div>
         </div>
       </div>
     </div>
