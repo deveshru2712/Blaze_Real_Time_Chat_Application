@@ -1,10 +1,28 @@
 import { Send } from "lucide-react";
 import { Input } from "./ui/input";
+import MessageBubble from "./MessageBubble";
+import SkeletonBubble from "./skeletons/SkeletonBubble";
 
 export default function Message() {
+  const isLoading = true;
   return (
     <div className="h-full flex flex-col mx-6 py-4">
-      <div className="flex-1"></div>
+      <div className="flex-1 flex-col flex gap-1">
+        {/* message bubble  */}
+        {isLoading ? (
+          <>
+            <SkeletonBubble isMyMessage={false} />
+            <SkeletonBubble isMyMessage={true} />
+            <SkeletonBubble isMyMessage={false} />
+          </>
+        ) : (
+          <>
+            <MessageBubble isMine={true} />
+            <MessageBubble isMine={false} />
+            <MessageBubble isMine={true} />
+          </>
+        )}
+      </div>
       <div className="w-full">
         <form className="w-full flex items-center gap-1">
           <Input placeholder="Type here..." type="text" className="" />
