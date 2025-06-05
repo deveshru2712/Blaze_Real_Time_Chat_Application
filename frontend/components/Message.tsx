@@ -5,6 +5,7 @@ import SkeletonBubble from "./skeletons/SkeletonBubble";
 
 export default function Message() {
   const isLoading = true;
+
   return (
     <div className="h-full flex flex-col mx-6 py-4">
       <div className="flex-1 flex-col flex gap-1">
