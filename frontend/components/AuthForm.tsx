@@ -12,9 +12,21 @@ import FormField from "./FormField";
 
 const authFormSchema = (type: FormType) => {
   return z.object({
-    username: type === "sign-up" ? z.string().min(3) : z.string().optional(),
-    email: z.string().email(),
-    password: z.string().min(3),
+    username:
+      type === "sign-up"
+        ? z
+            .string()
+            .min(3, "Username must be at least 3 characters long")
+            .max(15, "Username must be less than 20 characters")
+        : z.string().optional(),
+    email: z
+      .string()
+      .email("Please enter a valid email address")
+      .min(1, "Email is required"),
+    password: z
+      .string()
+      .min(6, "Password must be at least 6 characters long")
+      .max(15, "Password must be less than 50 characters"),
   });
 };
 
@@ -29,9 +41,17 @@ export default function AuthForm({ type }: { type: FormType }) {
       username: "",
       password: "",
     },
+    // This ensures validation happens on change and submit
+    mode: "all",
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    // Trigger validation manually to show all errors
+    const isValid = await form.trigger();
+    if (!isValid) {
+      return; // Stop submission if validation fails
+    }
+
     if (type == "sign-in") {
       console.log("sign-in", values);
 
@@ -117,8 +137,15 @@ export default function AuthForm({ type }: { type: FormType }) {
                 <Button
                   type="submit"
                   className="w-full bg-gradient-to-r from-orange-400 to-red-400 text-white text-lg font-semibold cursor-pointer py-2 active:scale-105 duration-300 transition-all hover:shadow-lg hover:shadow-orange-400/30"
+                  disabled={
+                    !form.formState.isValid || form.formState.isSubmitting
+                  }
                 >
-                  {type == "sign-in" ? "Sign in" : "Create an account"}
+                  {form.formState.isSubmitting
+                    ? "Processing..."
+                    : type == "sign-in"
+                    ? "Sign in"
+                    : "Create an account"}
                 </Button>
               </form>
             </Form>

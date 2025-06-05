@@ -3,6 +3,7 @@ import { Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import AnimatedBlobs from "@/components/Blob";
+import { Toaster } from "@/components/ui/sonner";
 
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
@@ -48,6 +49,7 @@ export default function RootLayout({
             {children}
           </div>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );
