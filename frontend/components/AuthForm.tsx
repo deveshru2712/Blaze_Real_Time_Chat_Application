@@ -8,7 +8,8 @@ import { z } from "zod";
 import { Form } from "./ui/form";
 import { Button } from "./ui/button";
 import FormField from "./FormField";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import authStore from "@/store/auth.store";
 
 const authFormSchema = (type: FormType) => {
   return z.object({
@@ -31,8 +32,10 @@ const authFormSchema = (type: FormType) => {
 };
 
 export default function AuthForm({ type }: { type: FormType }) {
-  //   const router = useRouter();
+  const router = useRouter();
   const formSchema = authFormSchema(type);
+
+  const { signUp, logIn } = authStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,15 +58,15 @@ export default function AuthForm({ type }: { type: FormType }) {
     if (type == "sign-in") {
       console.log("sign-in", values);
 
-      //   await logIn(values);
-      //   router.push("/message");
+      await logIn(values);
+      router.push("/message");
     } else {
       console.log("sign-up", values);
 
-      //   await signUp(
-      //     values as { username: string; email: string; password: string }
-      //   );
-      //   router.push("/message");
+      await signUp(
+        values as { username: string; email: string; password: string }
+      );
+      router.push("/message");
     }
   };
 
