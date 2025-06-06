@@ -4,7 +4,7 @@ import MessageBubble from "./MessageBubble";
 import SkeletonBubble from "./skeletons/SkeletonBubble";
 
 export default function Message() {
-  const isLoading = true;
+  const isLoading = false;
 
   return (
     <div className="h-full flex flex-col mx-6 py-4">

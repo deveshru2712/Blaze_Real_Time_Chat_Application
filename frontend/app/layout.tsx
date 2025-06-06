@@ -33,6 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body
+        suppressHydrationWarning={true}
         className={`${bricolage.variable} antialiased dark:bg-black/95 dark:text-white overflow-x-hidden`}
       >
         <div className="h-screen w-screen fixed -z-50 pointer-events-none">
