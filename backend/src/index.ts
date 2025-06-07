@@ -6,6 +6,7 @@ import cors from "cors";
 import createHttpError, { isHttpError } from "http-errors";
 import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth.router";
+import messageRouter from "./routes/message.router";
 
 export const app = express();
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api/message", messageRouter);
 
 app.use((req, res, next) => {
   next(createHttpError(404, "Page not found"));

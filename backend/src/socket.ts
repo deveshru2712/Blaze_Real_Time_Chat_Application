@@ -28,6 +28,7 @@ io.on("connection", async (socket) => {
   await redisClient.set(`user:${socket.id}`, "1", { EX: 60 });
   console.log("new user connected:", socket.id);
 
+  // refresh the redis entry
   socket.on("heartbeat", async () => {
     await redisClient.expire(`user:${socket.id}`, 60);
   });
