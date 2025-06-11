@@ -30,6 +30,8 @@ export const getMessage: RequestHandler<
       return;
     }
 
+    // cache the message here
+
     res.status(200).json({
       success: true,
       message: "successfully retrieved  message",

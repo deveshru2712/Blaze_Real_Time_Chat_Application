@@ -5,7 +5,9 @@ import env from "./utils/validateEnv";
 import { redisClient } from "./utils/redis/redisClient";
 
 const httpServer = createServer(app);
-const io = new Server(httpServer);
+const io = new Server(httpServer, {
+  cors: { origin: env.CLIENT_URL },
+});
 
 // adding a middleware to check if redis is up or not
 
@@ -24,18 +26,37 @@ io.use(async (socket, next) => {
 });
 
 io.on("connection", async (socket) => {
-  // add user to the list of active user
-  await redisClient.set(`user:${socket.id}`, "1", { EX: 60 });
-  console.log("new user connected:", socket.id);
+  // listening for the event to register user entry for redis
+  socket.on("register", async (userId: string, callback) => {
+    try {
+      // add user to the list of active user
+      await redisClient.set(`active:${socket.id}`, userId, { EX: 60 });
+      console.log("new user connected:", socket.id);
+
+      callback({
+        success: true,
+        message: "User Successfully registered",
+        userId,
+      });
+    } catch (error) {
+      console.log(`Unable to register user`, error);
+
+      callback({
+        success: false,
+        message: "Registration failed",
+        userId,
+      });
+    }
+  });
 
   // refresh the redis entry
   socket.on("heartbeat", async () => {
-    await redisClient.expire(`user:${socket.id}`, 60);
+    await redisClient.expire(`active:${socket.id}`, 60);
   });
 
-  socket.on("disconnect", async () => {
+  socket.on("unregister", async () => {
     // remove the user from active user
-    await redisClient.del(`user:${socket.id}`);
+    await redisClient.del(`active:${socket.id}`);
     console.log("user disconnected:", socket.id);
   });
 });

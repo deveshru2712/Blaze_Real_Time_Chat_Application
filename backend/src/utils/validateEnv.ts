@@ -10,4 +10,5 @@ export default cleanEnv(process.env, {
   REDIS_PASSWORD: str(),
   REDIS_HOST: str(),
   REDIS_PORT: port(),
+  CLIENT_URL: str(),
 });
