@@ -5,8 +5,10 @@ import { z } from "zod";
 import cors from "cors";
 import createHttpError, { isHttpError } from "http-errors";
 import cookieParser from "cookie-parser";
+
 import authRouter from "./routes/auth.router";
 import messageRouter from "./routes/message.router";
+import userRouter from "./routes/user.router";
 
 export const app = express();
 app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
@@ -19,6 +21,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRouter);
 app.use("/api/message", messageRouter);
+app.use("/api/user", userRouter);
 
 app.use((req, res, next) => {
   next(createHttpError(404, "Page not found"));

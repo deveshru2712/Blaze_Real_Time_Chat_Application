@@ -1,13 +1,6 @@
 import Image from "next/image";
 import React from "react";
 
-interface MessageBoxProps {
-  username: string;
-  profileImg: string;
-  latestMessage?: string;
-  time?: string;
-}
-
 export default function MessageBox({
   username,
   profileImg,

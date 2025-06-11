@@ -28,3 +28,20 @@ interface AuthStoreActions {
   logOut: () => void;
   authCheck: () => void;
 }
+
+interface SocketStoreState {
+  socket: Socket | null;
+  isProcessing: boolean;
+}
+
+interface SocketStoreActions {
+  setSocket: () => void;
+  disconnect: () => void;
+}
+
+interface MessageBoxProps {
+  username: string;
+  profileImg: string;
+  latestMessage?: string;
+  time?: string;
+}

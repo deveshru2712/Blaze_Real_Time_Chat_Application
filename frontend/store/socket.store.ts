@@ -1,17 +1,7 @@
 import { create } from "zustand";
-import { Socket, io } from "socket.io-client";
+import { io } from "socket.io-client";
 import authStore from "./auth.store";
 import { toast } from "sonner";
-
-interface SocketStoreState {
-  socket: Socket | null;
-  isProcessing: boolean;
-}
-
-interface SocketStoreActions {
-  setSocket: () => void;
-  disconnect: () => void;
-}
 
 type SocketStore = SocketStoreState & SocketStoreActions;
 

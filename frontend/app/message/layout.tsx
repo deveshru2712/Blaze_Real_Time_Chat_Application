@@ -11,42 +11,33 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const { setSocket, isProcessing } = socketStore();
   const router = useRouter();
 
+  // Initialize authentication and socket connection
   useEffect(() => {
-    authCheck();
-  }, [authCheck]);
+    const initialize = async () => {
+      await authCheck();
+      setSocket();
+    };
+    initialize();
+  }, [authCheck, setSocket]);
 
-  useEffect(() => {
-    setSocket();
-  }, [setSocket]);
-
+  // Redirect if unauthenticated
   useEffect(() => {
     if (!isLoading && !user) {
       router.replace("/sign-in");
     }
   }, [user, isLoading, router]);
 
-  if (isLoading) {
-    return (
-      <div className="w-screen h-screen flex justify-center items-center">
-        <Loader />
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="w-screen h-screen flex justify-center items-center">
-        <Loader />
-      </div>
-    );
-  }
-
-  if (isProcessing) {
+  // Show loader during initialization
+  if (isLoading || !user || isProcessing) {
     return (
       <div className="w-screen h-screen flex flex-col justify-center items-center gap-4">
         <Loader />
         <div className="dark:text-slate-300 text-slate-600 text-lg font-semibold">
-          Connecting to the server.Please wait...
+          {isLoading
+            ? "Checking authentication..."
+            : isProcessing
+            ? "Connecting to server..."
+            : "Initializing application..."}
         </div>
       </div>
     );
