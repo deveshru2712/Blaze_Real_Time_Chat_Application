@@ -32,7 +32,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
       <div className="w-screen h-screen flex flex-col justify-center items-center gap-4">
         <Loader />
-        <div className="dark:text-slate-300 text-slate-600 text-lg font-semibold">
+        <div className="text-lg font-semibold">
           {isLoading
             ? "Checking authentication..."
             : isProcessing

@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import MessageBox from "./MessageBox";
 import { Input } from "./ui/input";
-import { Search } from "lucide-react";
 import api from "@/utils/Axios";
 import SkeletonMessageBox from "./skeletons/SkeletonMessageBox";
 import { useRouter } from "next/navigation";
@@ -50,7 +49,7 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="w-1/3 h-screen border-r px-2 py-1 hidden md:flex md:flex-col gap-1">
+    <div className="w-1/3 mt-5 h-screen border-r px-2 py-1 hidden md:flex md:flex-col gap-1">
       <form className="w-full flex items-center" onSubmit={onSubmitHandler}>
         <Input
           className="font-semibold"
@@ -58,15 +57,15 @@ export default function Sidebar() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <button
+        {/* <button
           type="submit"
           className="relative p-2 rounded-md overflow-hidden group cursor-pointer flex items-center justify-center"
         >
           <div className="absolute inset-x-[5px] inset-y-[5px] bg-slate-400 dark:bg-white/80 rounded-md group-hover:bg-gradient-to-r group-hover:from-orange-400 group-hover:to-red-400 transition-all duration-300" />
-          <div className="relative z-10 p-1.5 bg-white dark:bg-black rounded-sm group-hover:bg-opacity-0 transition-colors duration-300 flex items-center justify-center">
+          <div className="relative z-10 p-1.5 bg-white dark:bg-slate-900 rounded-sm group-hover:bg-opacity-0 transition-colors duration-300 flex items-center justify-center">
             <Search className="w-4 h-4 text-gray-700 dark:text-white/80 group-hover:text-orange-400 dark:group-hover:text-orange-400 transition-colors duration-300" />
           </div>
-        </button>
+        </button> */}
       </form>
 
       {isFetching ? (
@@ -83,7 +82,7 @@ export default function Sidebar() {
           />
         ))
       ) : (
-        <div className="text-slate-700 font-semibold text-center my-10">
+        <div className="font-semibold text-center my-10">
           Start messaging your friend...
         </div>
       )}

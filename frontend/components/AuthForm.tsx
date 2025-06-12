@@ -76,7 +76,7 @@ export default function AuthForm({ type }: { type: FormType }) {
   return (
     <div className="w-screen h-screen flex justify-center items-center px-6">
       <div
-        className={`${classes.border} shadow-md lg:min-w-[566px] px-8 py-6 rounded-2xl`}
+        className={`${classes.border} border shadow-md lg:min-w-[566px] px-8 py-6 rounded-2xl`}
       >
         <div className="flex flex-col items-center gap-4">
           <h1 className="text-4xl font-bold">

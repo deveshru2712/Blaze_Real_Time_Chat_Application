@@ -17,7 +17,7 @@ export const themeClasses = {
     cardBg: "bg-slate-800/60",
     textPrimary: "text-slate-100",
     textSecondary: "text-slate-300",
-    border: "border-slate-700/50",
+    border: "border-slate-600/50",
     dots: {
       blue: "bg-blue-400/40",
       purple: "bg-purple-400/35",

@@ -1,3 +1,5 @@
+"use client";
+import { useAppTheme } from "@/hooks/useTheme";
 import React from "react";
 
 interface SkeletonBubbleProps {
@@ -5,10 +7,12 @@ interface SkeletonBubbleProps {
 }
 
 export default function SkeletonBubble({ isMyMessage }: SkeletonBubbleProps) {
+  const { classes } = useAppTheme();
+
   return (
     <div
       className={`flex ${
-        isMyMessage ? "justify-start" : " justify-end"
+        isMyMessage ? "justify-start" : "justify-end"
       } mb-6 px-4`}
     >
       <div
@@ -16,39 +20,40 @@ export default function SkeletonBubble({ isMyMessage }: SkeletonBubbleProps) {
           isMyMessage ? "flex-row" : "flex-row-reverse"
         }`}
       >
-        {/* image placeholder */}
+        {/* Avatar Skeleton */}
         <div
           className={`flex-shrink-0 w-12 h-12 rounded-full animate-pulse ${
-            isMyMessage
-              ? "bg-orange-300 dark:bg-orange-400"
-              : "bg-red-300 dark:bg-red-400"
+            isMyMessage ? classes.dots.emerald : classes.dots.blue
           }`}
         ></div>
 
         <div className="flex flex-col gap-1 w-full">
-          {/* Message */}
+          {/* Message Skeleton */}
           <div
-            className={`
-            px-4 py-3 rounded-2xl shadow-sm
-            ${
+            className={`px-4 py-3 rounded-2xl shadow-sm animate-pulse ${
               isMyMessage
-                ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white rounded-br-md"
-                : "bg-white border border-gray-200 text-gray-800 rounded-bl-md shadow-md dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-            }
-            `}
+                ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-br-md"
+                : `${classes.cardBg} ${classes.border} border rounded-bl-md shadow-md`
+            }`}
           >
             <div className="space-y-2">
+              {/* First line skeleton */}
               <div
                 className={`h-4 rounded-full animate-pulse ${
-                  isMyMessage ? "bg-white/30" : "bg-gray-300 dark:bg-gray-600"
+                  isMyMessage
+                    ? "bg-white/30"
+                    : "bg-slate-300/70 dark:bg-slate-600/50"
                 }`}
                 style={{ width: Math.random() * 40 + 60 + "%" }}
               ></div>
 
+              {/* Second line skeleton (randomly shown) */}
               {Math.random() > 0.5 && (
                 <div
                   className={`h-4 rounded-full animate-pulse ${
-                    isMyMessage ? "bg-white/30" : "bg-gray-300 dark:bg-gray-600"
+                    isMyMessage
+                      ? "bg-white/30"
+                      : "bg-slate-300/70 dark:bg-slate-600/50"
                   }`}
                   style={{ width: Math.random() * 60 + 40 + "%" }}
                 ></div>
@@ -56,12 +61,10 @@ export default function SkeletonBubble({ isMyMessage }: SkeletonBubbleProps) {
             </div>
           </div>
 
-          {/* Timestamp  */}
-          <div
-            className={`text-xs text-gray-500 dark:text-gray-400 px-2 text-right`}
-          >
+          {/* Timestamp Skeleton */}
+          <div className={`${classes.textSecondary} text-xs px-2 text-right`}>
             <div
-              className={`h-3 w-12 bg-gray-300 dark:bg-gray-600 rounded animate-pulse inline-block`}
+              className={`h-3 w-12 bg-slate-300/60 dark:bg-slate-600/40 rounded animate-pulse inline-block`}
             ></div>
           </div>
         </div>
