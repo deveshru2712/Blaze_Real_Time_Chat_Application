@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function MessageBoxSkeleton() {
+export default function SkeletonMessageBox() {
   return (
     <div className="w-full px-2 h-20 rounded-md relative group animate-pulse">
       <div className="absolute inset-1 -z-10 bg-slate-400 rounded-md" />

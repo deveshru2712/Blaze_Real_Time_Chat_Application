@@ -34,21 +34,19 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning={true}>
       <body
         suppressHydrationWarning={true}
-        className={`${bricolage.variable} antialiased dark:bg-black/95 dark:text-white overflow-x-hidden`}
+        className={`${bricolage.variable} antialiased transition-colors duration-300 ease-in-out overflow-x-hidden`}
       >
-        <div className="h-screen w-screen fixed -z-50 pointer-events-none">
-          <AnimatedBlobs />
-        </div>
-
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <div className="relative z-10 min-h-screen transition-colors duration-300 ease-in-out">
-            {children}
+          <div className="h-screen w-screen fixed -z-50 pointer-events-none">
+            <AnimatedBlobs />
           </div>
+
+          <div className="relative z-10 min-h-screen">{children}</div>
         </ThemeProvider>
         <Toaster />
       </body>

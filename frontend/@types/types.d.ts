@@ -40,6 +40,7 @@ interface SocketStoreActions {
 }
 
 interface MessageBoxProps {
+  onClick: () => void;
   username: string;
   profileImg: string;
   latestMessage?: string;

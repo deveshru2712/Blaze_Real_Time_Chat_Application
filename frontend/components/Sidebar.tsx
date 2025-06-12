@@ -4,12 +4,15 @@ import MessageBox from "./MessageBox";
 import { Input } from "./ui/input";
 import { Search } from "lucide-react";
 import api from "@/utils/Axios";
-import MessageBoxSkeleton from "./skeletons/SkeletonMessageBox";
+import SkeletonMessageBox from "./skeletons/SkeletonMessageBox";
+import { useRouter } from "next/navigation";
 
 export default function Sidebar() {
   const [username, setUsername] = useState("");
   const [userList, setUserList] = useState<User[]>([]);
   const [isFetching, setIsFetching] = useState(false);
+
+  const router = useRouter();
 
   // Debounced search effect
   useEffect(() => {
@@ -67,10 +70,11 @@ export default function Sidebar() {
       </form>
 
       {isFetching ? (
-        <MessageBoxSkeleton />
+        <SkeletonMessageBox />
       ) : userList.length > 0 ? (
         userList.map((item) => (
           <MessageBox
+            onClick={() => router.push(`user/${item.id}`)}
             key={item.id}
             profileImg={"https://avatar.iran.liara.run/public"}
             username={item.username}

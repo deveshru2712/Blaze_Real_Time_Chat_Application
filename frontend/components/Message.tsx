@@ -5,6 +5,7 @@ import MessageBubble from "./MessageBubble";
 import SkeletonBubble from "./skeletons/SkeletonBubble";
 import React, { useEffect, useState } from "react";
 import socketStore from "@/store/socket.store";
+import MessageNav from "./MessageNav";
 
 export default function Message() {
   const [message, setMessage] = useState("");
@@ -31,6 +32,7 @@ export default function Message() {
   return (
     <div className="h-full flex flex-col mx-6 py-4">
       <div className="flex-1 flex-col flex gap-1">
+        <MessageNav />
         {/* message bubble  */}
         {isLoading ? (
           <>

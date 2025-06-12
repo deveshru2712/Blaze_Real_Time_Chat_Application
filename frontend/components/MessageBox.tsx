@@ -6,9 +6,13 @@ export default function MessageBox({
   profileImg,
   time,
   latestMessage,
+  onClick,
 }: MessageBoxProps) {
   return (
-    <div className="w-full px-2 h-20 rounded-md cursor-pointer relative group">
+    <div
+      onClick={onClick}
+      className="w-full px-2 h-20 rounded-md cursor-pointer relative group"
+    >
       {/* gradient div */}
 
       <div className="absolute inset-1 -z-10 bg-slate-400 group-hover:bg-gradient-to-r group-hover:from-orange-400 group-hover:to-red-400/90 rounded-md transition-colors duration-500" />
