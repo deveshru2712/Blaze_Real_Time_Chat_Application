@@ -57,15 +57,6 @@ export default function Sidebar() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        {/* <button
-          type="submit"
-          className="relative p-2 rounded-md overflow-hidden group cursor-pointer flex items-center justify-center"
-        >
-          <div className="absolute inset-x-[5px] inset-y-[5px] bg-slate-400 dark:bg-white/80 rounded-md group-hover:bg-gradient-to-r group-hover:from-orange-400 group-hover:to-red-400 transition-all duration-300" />
-          <div className="relative z-10 p-1.5 bg-white dark:bg-slate-900 rounded-sm group-hover:bg-opacity-0 transition-colors duration-300 flex items-center justify-center">
-            <Search className="w-4 h-4 text-gray-700 dark:text-white/80 group-hover:text-orange-400 dark:group-hover:text-orange-400 transition-colors duration-300" />
-          </div>
-        </button> */}
       </form>
 
       {isFetching ? (
