@@ -2,11 +2,13 @@
 import Message from "@/components/Message";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
-import { useParams } from "next/navigation";
+import messageStore from "@/store/message.store";
 
 export default function Page() {
-  const params = useParams();
-  const receiverId = params.receiverId as string;
+  const { receiverUser } = messageStore();
+  if (!receiverUser) {
+    return null;
+  }
 
   return (
     <div className="w-screen h-screen overflow-hidden flex flex-col">
@@ -14,7 +16,7 @@ export default function Page() {
       <div className="flex flex-1 w-full border-t border-slate-200/60 overflow-hidden">
         <Sidebar />
         <div className="flex-1 h-full overflow-hidden mx-6 py-8">
-          <Message receiverId={receiverId} />
+          <Message user={receiverUser} />
         </div>
       </div>
     </div>

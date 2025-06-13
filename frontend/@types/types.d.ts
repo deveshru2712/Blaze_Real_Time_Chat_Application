@@ -29,7 +29,7 @@ interface Message {
 // component types
 
 interface MessageProps {
-  receiverId: string;
+  user: User;
 }
 
 interface MessageBoxProps {

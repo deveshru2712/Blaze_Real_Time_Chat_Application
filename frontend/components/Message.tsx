@@ -7,7 +7,7 @@ import React, { useEffect } from "react";
 import MessageNav from "./MessageNav";
 import messageStore from "@/store/message.store";
 
-export default function Message({ receiverId }: MessageProps) {
+export default function Message({ user }: MessageProps) {
   const {
     isPending,
     fetchingMessage,
@@ -19,8 +19,8 @@ export default function Message({ receiverId }: MessageProps) {
   } = messageStore();
 
   useEffect(() => {
-    fetchingMessage(receiverId);
-  }, [fetchingMessage, receiverId]);
+    fetchingMessage(user.id);
+  }, [fetchingMessage, user]);
 
   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

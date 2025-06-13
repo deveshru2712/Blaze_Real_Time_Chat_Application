@@ -59,12 +59,14 @@ const messageStore = create<MessageStore>((set, get) => ({
           userList: response.data.users,
           isSearching: false,
           searchTimeoutId: null,
+          searchUsername: "",
         });
       } catch (error) {
         set({
           userList: [],
           isSearching: false,
           searchTimeoutId: null,
+          searchUsername: "",
         });
         console.log(error);
       }
@@ -76,12 +78,11 @@ const messageStore = create<MessageStore>((set, get) => ({
   fetchingMessage: async (receiverId) => {
     set({ isPending: true });
     try {
-      const response = await fetch(`/api/messages/${receiverId}`);
-      const data = await response.json();
+      const response = await api(`/message/${receiverId}`);
+      // const data = await response.json();
 
       set({
-        messageArr: data.messages || [],
-        receiverUser: data.user || null,
+        messageArr: response.data.result || [],
         isPending: false,
       });
     } catch (error) {
