@@ -29,7 +29,7 @@ interface Message {
 // component types
 
 interface MessageProps {
-  user: User;
+  User: User;
 }
 
 interface MessageBoxProps {

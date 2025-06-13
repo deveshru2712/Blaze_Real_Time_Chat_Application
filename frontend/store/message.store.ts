@@ -79,7 +79,6 @@ const messageStore = create<MessageStore>((set, get) => ({
     set({ isPending: true });
     try {
       const response = await api(`/message/${receiverId}`);
-      // const data = await response.json();
 
       set({
         messageArr: response.data.result || [],

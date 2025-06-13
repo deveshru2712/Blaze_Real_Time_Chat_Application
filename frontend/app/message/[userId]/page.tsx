@@ -16,7 +16,7 @@ export default function Page() {
       <div className="flex flex-1 w-full border-t border-slate-200/60 overflow-hidden">
         <Sidebar />
         <div className="flex-1 h-full overflow-hidden mx-6 py-8">
-          <Message user={receiverUser} />
+          <Message User={receiverUser} />
         </div>
       </div>
     </div>

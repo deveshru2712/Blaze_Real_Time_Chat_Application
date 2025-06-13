@@ -6,8 +6,9 @@ import SkeletonBubble from "./skeletons/SkeletonBubble";
 import React, { useEffect } from "react";
 import MessageNav from "./MessageNav";
 import messageStore from "@/store/message.store";
+import authStore from "@/store/auth.store";
 
-export default function Message({ user }: MessageProps) {
+export default function Message({ User }: MessageProps) {
   const {
     isPending,
     fetchingMessage,
@@ -19,8 +20,14 @@ export default function Message({ user }: MessageProps) {
   } = messageStore();
 
   useEffect(() => {
-    fetchingMessage(user.id);
-  }, [fetchingMessage, user]);
+    fetchingMessage(User.id);
+  }, [fetchingMessage, User]);
+
+  const { user } = authStore();
+
+  if (!user) {
+    return null;
+  }
 
   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,7 +54,7 @@ export default function Message({ user }: MessageProps) {
           messageArr.map((msg, index) => (
             <MessageBubble
               key={msg.id || index}
-              isMine={msg.senderId === "currentUserId"}
+              isMine={msg.senderId === user.id}
               message={msg.content}
             />
           ))

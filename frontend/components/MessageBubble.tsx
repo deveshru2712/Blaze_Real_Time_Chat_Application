@@ -3,7 +3,7 @@ import { useAppTheme } from "@/hooks/useTheme";
 
 export default function MessageBubble({
   isMine,
-  message = "Sample message...",
+  message,
   time = "11:28 AM",
 }: MessageBubbleProps) {
   const { classes } = useAppTheme();
@@ -43,7 +43,7 @@ export default function MessageBubble({
           {/* Timestamp */}
           <div
             className={`text-xs ${classes.textSecondary} px-2 ${
-              isMine ? "text-right" : "text-left"
+              isMine ? "text-left" : " text-right"
             }`}
           >
             {time}
