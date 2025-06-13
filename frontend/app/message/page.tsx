@@ -1,7 +1,6 @@
-import Message from "@/components/Message";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
-// import { MessageCircle, Search, Users } from "lucide-react";
+import { MessageCircle, Search, Users } from "lucide-react";
 
 export default function Page() {
   return (
@@ -10,7 +9,7 @@ export default function Page() {
       <div className="flex flex-1 w-full border-t border-slate-200/60 overflow-hidden">
         <Sidebar />
         <div className="flex-1 h-full overflow-hidden mx-6 py-8">
-          {/* <div className="flex flex-col justify-center items-center h-full max-w-md mx-auto text-center space-y-6">
+          <div className="flex flex-col justify-center items-center h-full max-w-md mx-auto text-center space-y-6">
             <div className="relative">
               <div className="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/25">
                 <MessageCircle className="w-12 h-12 " />
@@ -30,8 +29,7 @@ export default function Page() {
                 chat journey
               </p>
             </div>
-          </div> */}
-          <Message />
+          </div>
         </div>
       </div>
     </div>

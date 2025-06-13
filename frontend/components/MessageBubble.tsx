@@ -1,12 +1,6 @@
 import React from "react";
 import { useAppTheme } from "@/hooks/useTheme";
 
-interface MessageBubbleProps {
-  isMine: boolean;
-  message?: string;
-  time?: string;
-}
-
 export default function MessageBubble({
   isMine,
   message = "Sample message...",

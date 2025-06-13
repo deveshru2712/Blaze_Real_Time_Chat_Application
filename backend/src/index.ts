@@ -5,12 +5,14 @@ import { z } from "zod";
 import cors from "cors";
 import createHttpError, { isHttpError } from "http-errors";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 
 import authRouter from "./routes/auth.router";
 import messageRouter from "./routes/message.router";
 import userRouter from "./routes/user.router";
 
 export const app = express();
+app.use(morgan("dev"));
 app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());

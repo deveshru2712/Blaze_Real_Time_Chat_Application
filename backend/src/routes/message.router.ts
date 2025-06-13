@@ -6,10 +6,10 @@ import { messageSchema } from "../utils/schema/messageSchema";
 
 const router = express.Router();
 
-router.get("/", ProtectedRoute, messageController.getMessage);
+router.get("/:receiverId", ProtectedRoute, messageController.getMessage);
 
 router.post(
-  "/",
+  "/:receiverId",
   ProtectedRoute,
   inputValidator(messageSchema),
   messageController.sendMessage

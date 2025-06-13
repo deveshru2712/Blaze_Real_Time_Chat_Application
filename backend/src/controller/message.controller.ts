@@ -14,6 +14,14 @@ export const getMessage: RequestHandler<
   try {
     // these message are according to the time they were sent
 
+    if (!receiverId) {
+      res.status(400).json({
+        success: false,
+        message: "Please provide a valid userid",
+      });
+      return;
+    }
+
     const conversation = await prismaClient.conversation.findFirst({
       where: {
         participants: { every: { id: { in: [senderId, receiverId] } } },
@@ -35,7 +43,7 @@ export const getMessage: RequestHandler<
     res.status(200).json({
       success: true,
       message: "successfully retrieved  message",
-      data: conversation.messages,
+      result: conversation.messages,
     });
     return;
   } catch (error) {
@@ -52,8 +60,15 @@ export const sendMessage: RequestHandler<
   const senderId = req.user.id;
   const receiverId = req.params.receiverId;
   const { content } = req.body;
-
   try {
+    if (!receiverId) {
+      res.status(400).json({
+        success: false,
+        message: "Please provide a valid userid",
+      });
+      return;
+    }
+
     const transaction = await prismaClient.$transaction(async (tx) => {
       // find the conversation
       let conversation = await tx.conversation.findFirst({

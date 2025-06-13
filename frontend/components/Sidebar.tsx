@@ -1,48 +1,21 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import MessageBox from "./MessageBox";
 import { Input } from "./ui/input";
-import api from "@/utils/Axios";
 import SkeletonMessageBox from "./skeletons/SkeletonMessageBox";
 import { useRouter } from "next/navigation";
+import messageStore from "@/store/message.store";
 
 export default function Sidebar() {
-  const [username, setUsername] = useState("");
-  const [userList, setUserList] = useState<User[]>([]);
-  const [isFetching, setIsFetching] = useState(false);
-
   const router = useRouter();
 
-  // Debounced search effect
-  useEffect(() => {
-    if (!username.trim()) {
-      setUserList([]);
-      setIsFetching(false);
-      return;
-    }
-
-    setIsFetching(true);
-
-    // Debounce the actual API call
-    const timeoutId = setTimeout(async () => {
-      try {
-        const response = await api(`/user`, {
-          params: { username: username.trim() },
-        });
-
-        setUserList(response.data.users);
-        console.log(response.data.users);
-      } catch (error) {
-        setUserList([]);
-        console.log(error);
-      } finally {
-        setIsFetching(false);
-      }
-    }, 500);
-
-    // Cleanup timeout if username changes before 500ms
-    return () => clearTimeout(timeoutId);
-  }, [username]);
+  const {
+    searchUsername,
+    userList,
+    isSearching,
+    setSearchUsername,
+    setReceiverUser,
+  } = messageStore();
 
   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,20 +27,23 @@ export default function Sidebar() {
         <Input
           className="font-semibold"
           placeholder="Type your friend name here .."
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={searchUsername}
+          onChange={(e) => setSearchUsername(e.target.value)}
         />
       </form>
 
-      {isFetching ? (
+      {isSearching ? (
         <SkeletonMessageBox />
       ) : userList.length > 0 ? (
-        userList.map((item) => (
+        userList.map((user) => (
           <MessageBox
-            onClick={() => router.push(`user/${item.id}`)}
-            key={item.id}
+            onClick={() => {
+              setReceiverUser(user);
+              router.push(`/message/${user.id}`);
+            }}
+            key={user.id}
             profileImg={"https://avatar.iran.liara.run/public"}
-            username={item.username}
+            username={user.username}
             latestMessage="hii there"
             time="11:29 AM"
           />

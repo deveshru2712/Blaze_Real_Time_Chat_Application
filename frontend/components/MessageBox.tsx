@@ -2,14 +2,6 @@ import Image from "next/image";
 import React from "react";
 import { useAppTheme } from "@/hooks/useTheme";
 
-interface MessageBoxProps {
-  username: string;
-  profileImg: string;
-  time: string;
-  latestMessage?: string;
-  onClick?: () => void;
-}
-
 export default function MessageBox({
   username = "user",
   profileImg = "https://avatar.iran.liara.run/public",

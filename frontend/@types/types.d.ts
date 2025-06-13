@@ -17,6 +17,41 @@ interface User {
   email: string;
 }
 
+interface Message {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  content: string;
+  // we will change it later on
+  time: string;
+}
+
+// component types
+
+interface MessageProps {
+  receiverId: string;
+}
+
+interface MessageBoxProps {
+  onClick: () => void;
+  username: string;
+  profileImg: string;
+  latestMessage?: string;
+  time?: string;
+}
+
+interface MessageBubbleProps {
+  isMine: boolean;
+  message?: string;
+  time?: string;
+}
+
+interface MessageNavProps {
+  user: User;
+}
+
+// auth store types
+
 interface AuthStoreState {
   user: User | null;
   isLoading: boolean;
@@ -29,6 +64,8 @@ interface AuthStoreActions {
   authCheck: () => void;
 }
 
+// socket store types
+
 interface SocketStoreState {
   socket: Socket | null;
   isProcessing: boolean;
@@ -39,10 +76,26 @@ interface SocketStoreActions {
   disconnect: () => void;
 }
 
-interface MessageBoxProps {
-  onClick: () => void;
-  username: string;
-  profileImg: string;
-  latestMessage?: string;
-  time?: string;
+// message store types
+
+interface MessageStoreState {
+  receiverUser: User | null;
+  userList: User[];
+  message: string;
+  messageArr: Message[];
+  isPending: boolean;
+  searchUsername: string;
+  isSearching: boolean;
+  // do not understand a thing
+  searchTimeoutId: NodeJS.Timeout | null;
+}
+
+interface MessageStoreActions {
+  fetchingMessage: (receiverId: string) => Promise<void>;
+  sendingMessage: (receiverId: string) => Promise<void>;
+  setMessage: (message: string) => void;
+  // set the user that is click upon as receiverUser
+  setReceiverUser: (user: User) => void;
+  setSearchUsername: (receiverId: string) => void;
+  clearSearch: () => void;
 }

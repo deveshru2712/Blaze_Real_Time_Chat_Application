@@ -3,51 +3,71 @@ import { Send } from "lucide-react";
 import { Input } from "./ui/input";
 import MessageBubble from "./MessageBubble";
 import SkeletonBubble from "./skeletons/SkeletonBubble";
-import React, { useEffect, useState } from "react";
-import socketStore from "@/store/socket.store";
+import React, { useEffect } from "react";
 import MessageNav from "./MessageNav";
+import messageStore from "@/store/message.store";
 
-export default function Message() {
-  const [message, setMessage] = useState("");
-  // const [messageArr, setMessageArr] = useState<>();
-  const isLoading = false;
-  const { socket, isProcessing } = socketStore();
+export default function Message({ receiverId }: MessageProps) {
+  const {
+    isPending,
+    fetchingMessage,
+    message,
+    setMessage,
+    receiverUser,
+    messageArr,
+    // sendingMessage,
+  } = messageStore();
 
   useEffect(() => {
-    // retrieve message
-  }, []);
+    fetchingMessage(receiverId);
+  }, [fetchingMessage, receiverId]);
 
-  const onSubmitHandler = (e: React.ChangeEvent<HTMLFormElement>) => {
+  const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!message.trim() || !socket || isProcessing) return;
-    try {
-      socket.emit("send-message", () => {
-        // append the latest message in the message array for seeing the latest message
-      });
-    } catch (error) {
-      console.log("An error occurred while sending message:", error);
-    }
+
+    // if (!message.trim()) return;
+
+    // await sendingMessage(receiverId, message);
   };
 
   return (
     <div className="h-full flex flex-col mx-6 py-4">
       <div className="flex-1 flex-col flex gap-1">
-        <MessageNav />
-        {/* message bubble  */}
-        {isLoading ? (
+        {receiverUser && <MessageNav user={receiverUser} />}
+
+        {/* message bubble */}
+        {isPending && messageArr.length === 0 ? (
+          // Show skeleton only when initially loading messages
           <>
             <SkeletonBubble isMyMessage={false} />
             <SkeletonBubble isMyMessage={true} />
             <SkeletonBubble isMyMessage={false} />
           </>
+        ) : messageArr.length > 0 ? (
+          messageArr.map((msg, index) => (
+            <MessageBubble
+              key={msg.id || index}
+              isMine={msg.senderId === "currentUserId"}
+              message={msg.content}
+            />
+          ))
         ) : (
-          <>
-            <MessageBubble isMine={true} />
-            <MessageBubble isMine={false} />
-            <MessageBubble isMine={true} />
-          </>
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                <Send className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                No messages yet
+              </h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Start a conversation by sending a message
+              </p>
+            </div>
+          </div>
         )}
       </div>
+
       <div className="w-full">
         <form
           onSubmit={onSubmitHandler}
@@ -58,10 +78,12 @@ export default function Message() {
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            disabled={isPending}
           />
           <button
             type="submit"
-            className="relative p-2 rounded-md overflow-hidden group cursor-pointer flex items-center justify-center"
+            disabled={isPending || !message.trim()}
+            className="relative p-2 rounded-md overflow-hidden group cursor-pointer flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <div className="absolute inset-x-[5px] inset-y-[5px] bg-slate-400 dark:bg-white/80 rounded-md group-hover:bg-gradient-to-r group-hover:from-orange-400 group-hover:to-red-400 transition-all duration-300" />
             <div className="relative z-10 p-1.5 bg-white dark:bg-black rounded-sm group-hover:bg-opacity-0 transition-colors duration-300 flex items-center justify-center">
