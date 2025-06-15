@@ -26,38 +26,23 @@ io.use(async (socket, next) => {
 });
 
 io.on("connection", async (socket) => {
-  // listening for the event to register user entry for redis
-  socket.on("register", async (userId: string, callback) => {
-    try {
-      // add user to the list of active user
-      await redisClient.set(`active:${socket.id}`, userId, { EX: 60 });
-      console.log("new user connected:", socket.id);
-
-      callback({
-        success: true,
-        message: "User Successfully registered",
-        userId,
-      });
-    } catch (error) {
-      console.log(`Unable to register user`, error);
-
-      callback({
-        success: false,
-        message: "Registration failed",
-        userId,
-      });
-    }
+  // register the user -> this will trigger when they sign-up
+  socket.on("register-user", async (userId: string) => {
+    // here i have two things to do
+    await redisClient.set(`active:${socket.id}`, userId, { EX: 60 });
+    await redisClient.set(`user:${userId}`, socket.id);
+    console.log("User connected:", socket.id);
   });
 
-  // refresh the redis entry
+  // for maintaining a active user list -> i am just refreshing it
+
   socket.on("heartbeat", async () => {
     await redisClient.expire(`active:${socket.id}`, 60);
   });
 
-  socket.on("unregister", async () => {
-    // remove the user from active user
+  socket.on("disconnect", async () => {
     await redisClient.del(`active:${socket.id}`);
-    console.log("user disconnected:", socket.id);
+    console.log("User disconnected:", socket.id);
   });
 });
 

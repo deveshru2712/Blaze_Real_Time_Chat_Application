@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import { MessageType } from "../utils/schema/messageSchema";
 import prismaClient from "../utils/prismaClient";
 import io from "../socket";
+import { redisClient } from "../utils/redis/redisClient";
 
 export const getMessage: RequestHandler<
   { receiverId: string },
@@ -136,6 +137,22 @@ export const sendMessage: RequestHandler<
       message: transaction.message.content,
       conversationId: transaction.conversation.id,
     });
+
+    // joining the room
+
+    const [senderSocketId, receiverSocketId] = await Promise.all([
+      redisClient.get(`user:${senderId}`),
+      redisClient.get(`user:${receiverId}`),
+    ]);
+
+    if (senderSocketId) {
+      io.to(senderSocketId).socketsJoin(transaction.conversation.id);
+    }
+    if (receiverSocketId) {
+      io.to(receiverSocketId).socketsJoin(transaction.conversation.id);
+    }
+
+    // here i have to handle the logic to some how get both the user in a single room
 
     io.to(transaction.conversation.id).emit("receive-message", {
       id: transaction.message.id,

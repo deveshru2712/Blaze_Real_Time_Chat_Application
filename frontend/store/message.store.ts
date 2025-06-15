@@ -1,7 +1,6 @@
 import api from "@/utils/Axios";
 import { create } from "zustand";
 import socketStore from "./socket.store";
-import authStore from "./auth.store";
 
 type MessageStore = MessageStoreState & MessageStoreActions;
 
@@ -98,6 +97,7 @@ const messageStore = create<MessageStore>((set, get) => ({
       if (!socket) {
         throw new Error("Socket connection not available");
       }
+
       const response = await api.post(`/message/${receiverId}`, message);
 
       const savedMessage = response.data.message;
