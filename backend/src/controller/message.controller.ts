@@ -59,7 +59,7 @@ export const sendMessage: RequestHandler<
 > = async (req, res, next) => {
   const senderId = req.user.id;
   const receiverId = req.params.receiverId;
-  const { content } = req.body;
+  const { message: content } = req.body;
   try {
     if (!receiverId) {
       res.status(400).json({
@@ -69,44 +69,81 @@ export const sendMessage: RequestHandler<
       return;
     }
 
+    const receiverExists = await prismaClient.user.findUnique({
+      where: { id: receiverId },
+      select: { id: true },
+    });
+
+    if (!receiverExists) {
+      res.status(404).json({
+        success: false,
+        message: "Receiver not found",
+      });
+      return;
+    }
+
     const transaction = await prismaClient.$transaction(async (tx) => {
-      // find the conversation
       let conversation = await tx.conversation.findFirst({
         where: {
-          participants: { every: { id: { in: [senderId, receiverId] } } },
+          AND: [
+            { participants: { some: { id: senderId } } },
+            { participants: { some: { id: receiverId } } },
+            { participants: { every: { id: { in: [senderId, receiverId] } } } },
+          ],
+        },
+        include: {
+          participants: { select: { id: true } },
         },
       });
 
-      // if conversation is not found
+      // if conversation does not exists then create a new conversation
       if (!conversation) {
         conversation = await tx.conversation.create({
           data: {
             participants: { connect: [{ id: senderId }, { id: receiverId }] },
           },
+          include: {
+            participants: {
+              select: { id: true },
+            },
+          },
         });
       }
 
-      // creating a new message
-
       const newMessage = await tx.message.create({
         data: {
-          content,
+          content: content.trim(),
+          conversationId: conversation.id,
           senderId,
           receiverId,
-          conversationId: conversation.id,
+        },
+        include: {
+          sender: {
+            select: {
+              id: true,
+              email: true,
+              username: true,
+              // add profile pic
+            },
+          },
         },
       });
-      return newMessage;
+      return { message: newMessage, conversation };
     });
 
     res.status(201).json({
       success: true,
-      message: transaction.content,
+      message: transaction.message.content,
+      conversationId: transaction.conversation.id,
     });
 
-    // sending the message two a room in which there are sender and receiver both
-
-    io.to(receiverId).emit("send-message", transaction.content);
+    io.to(transaction.conversation.id).emit("receive-message", {
+      id: transaction.message.id,
+      content: transaction.message.content,
+      senderId: transaction.message.senderId,
+      receiverId: transaction.message.receiverId,
+      createdAt: transaction.message.createdAt,
+    });
     return;
   } catch (error) {
     next(error);
