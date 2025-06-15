@@ -74,11 +74,14 @@ declare global {
   interface SocketStoreState {
     socket: Socket | null;
     isProcessing: boolean;
+    refreshInterval: NodeJS.Timeout | null;
   }
 
   interface SocketStoreActions {
     setSocket: () => void;
     disconnect: () => void;
+    startHeartBeat: () => void;
+    clearRefreshInterval: () => void;
   }
 
   // message store types

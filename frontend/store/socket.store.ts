@@ -5,9 +5,10 @@ import { toast } from "sonner";
 
 type SocketStore = SocketStoreState & SocketStoreActions;
 
-const socketStore = create<SocketStore>((set) => ({
+const socketStore = create<SocketStore>((set, get) => ({
   socket: null,
   isProcessing: false,
+  refreshInterval: null,
   setSocket: () => {
     set({ isProcessing: true });
     const { socket } = socketStore.getState();
@@ -16,7 +17,6 @@ const socketStore = create<SocketStore>((set) => ({
       if (user) {
         if (socket) {
           // going to un-register using the socket id
-          socket.emit("unregister");
           socket.disconnect();
         }
         set({ socket: null });
@@ -26,22 +26,41 @@ const socketStore = create<SocketStore>((set) => ({
 
       if (user) {
         // calling the register function
-        newSocket.emit(
-          "register",
-          user.id,
-          (response: { success: boolean; message: string; userId: string }) => {
-            if (response.success) {
-              toast.success(response.message);
-            } else {
-              toast.error(response.message);
-            }
-          }
-        );
+        newSocket.emit("register", user.id);
         set({ socket: newSocket, isProcessing: false });
+        toast.success("User online 🔥");
       }
     } catch (error) {
       console.log("Unable to connect to the server", error);
       set({ isProcessing: false, socket: null });
+      toast.error("User offline 💀");
+    }
+  },
+  startHeartBeat: () => {
+    set({ isProcessing: true });
+    const { socket, refreshInterval } = get();
+    try {
+      if (socket && !refreshInterval) {
+        socket.emit("heartbeat");
+
+        // so that we can maintain active status
+        const interval = setInterval(() => {
+          if (socket.connected) {
+            socket.emit("heartbeat");
+          }
+        }, 50000);
+
+        set({ refreshInterval: interval });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  clearRefreshInterval: () => {
+    const { refreshInterval } = get();
+    if (refreshInterval) {
+      clearInterval(refreshInterval);
+      set({ refreshInterval: null });
     }
   },
   disconnect: () => {
@@ -50,7 +69,6 @@ const socketStore = create<SocketStore>((set) => ({
       const { socket } = socketStore.getState();
 
       if (socket) {
-        socket.emit("unregister");
         socket.disconnect();
       }
 

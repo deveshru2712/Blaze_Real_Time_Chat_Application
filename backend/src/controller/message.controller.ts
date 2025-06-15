@@ -152,8 +152,6 @@ export const sendMessage: RequestHandler<
       io.to(receiverSocketId).socketsJoin(transaction.conversation.id);
     }
 
-    // here i have to handle the logic to some how get both the user in a single room
-
     io.to(transaction.conversation.id).emit("receive-message", {
       id: transaction.message.id,
       content: transaction.message.content,

@@ -8,7 +8,7 @@ import React, { useEffect } from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { user, isLoading, authCheck } = authStore();
-  const { setSocket, isProcessing } = socketStore();
+  const { setSocket, isProcessing, disconnect } = socketStore();
   const router = useRouter();
 
   // Initialize authentication and socket connection
@@ -16,9 +16,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const initialize = async () => {
       await authCheck();
       setSocket();
+      return () => {
+        disconnect();
+      };
     };
     initialize();
-  }, [authCheck, setSocket]);
+  }, [authCheck, setSocket, disconnect]);
 
   // Redirect if unauthenticated
   useEffect(() => {
