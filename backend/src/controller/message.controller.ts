@@ -89,7 +89,9 @@ export const sendMessage: RequestHandler<
           AND: [
             { participants: { some: { id: senderId } } },
             { participants: { some: { id: receiverId } } },
-            { participants: { every: { id: { in: [senderId, receiverId] } } } },
+            {
+              participants: { none: { id: { notIn: [senderId, receiverId] } } },
+            },
           ],
         },
         include: {
@@ -152,13 +154,16 @@ export const sendMessage: RequestHandler<
       io.to(receiverSocketId).socketsJoin(transaction.conversation.id);
     }
 
-    io.to(transaction.conversation.id).emit("receive-message", {
+    const messageData = {
       id: transaction.message.id,
       content: transaction.message.content,
       senderId: transaction.message.senderId,
       receiverId: transaction.message.receiverId,
       createdAt: transaction.message.createdAt,
-    });
+    };
+
+    io.to(transaction.conversation.id).emit("receive-message", messageData);
+
     return;
   } catch (error) {
     next(error);

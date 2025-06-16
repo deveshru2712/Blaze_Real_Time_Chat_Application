@@ -20,15 +20,23 @@ declare global {
     id: string;
     username: string;
     email: string;
+    conversations?: Conversation[];
+  }
+
+  interface Conversation {
+    id: string;
+    participants: User[];
+    messages?: Message[];
+    createdAt: Date;
+    updatedAt: Date;
   }
 
   interface Message {
     id: string;
+    content: string;
     senderId: string;
     receiverId: string;
-    content: string;
-    // we will change it later on
-    time: string;
+    createdAt: string;
   }
 
   // component types
@@ -84,27 +92,39 @@ declare global {
     clearRefreshInterval: () => void;
   }
 
+  // search store types
+  interface SearchStoreState {
+    userList: User[];
+    isSearching: boolean;
+    receiverUser: User | null;
+    searchUsername: string;
+    searchTimeout: NodeJS.Timeout | null;
+  }
+
+  interface SearchStoreActions {
+    setReceiverUser: (user: User) => void;
+    setSearchUsername: (receiverId: string) => void;
+    clearSearch: () => void;
+  }
+
   // message store types
 
   interface MessageStoreState {
-    receiverUser: User | null;
-    userList: User[];
     message: string;
     messageArr: Message[];
     isPending: boolean;
-    searchUsername: string;
-    isSearching: boolean;
-    // do not understand a thing
-    searchTimeoutId: NodeJS.Timeout | null;
+    currentConversationId: string | null;
   }
 
   interface MessageStoreActions {
     fetchingMessage: (receiverId: string) => Promise<void>;
-    sendingMessage: (receiverId: string, message: string) => Promise<void>;
+    sendMessage: (
+      receiverId: string,
+      message: string,
+      socket: Socket
+    ) => Promise<void>;
     setMessage: (message: string) => void;
-    // set the user that is click upon as receiverUser
-    setReceiverUser: (user: User) => void;
-    setSearchUsername: (receiverId: string) => void;
-    clearSearch: () => void;
+    setCurrentConversationId: (conversationId: string) => void;
+    setMessageArr: (MessageArr: Message[]) => void;
   }
 }

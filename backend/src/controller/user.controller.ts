@@ -5,10 +5,10 @@ export const searchUser: RequestHandler<
   unknown,
   unknown,
   unknown,
-  { username?: string }
+  { username: string }
 > = async (req, res, next) => {
   const { username } = req.query;
-
+  const currentUser = req.user.id;
   try {
     if (!username || !username.trim()) {
       res
@@ -23,14 +23,15 @@ export const searchUser: RequestHandler<
           contains: username.trim(),
           mode: "insensitive",
         },
+        NOT: { id: currentUser },
       },
+
       select: { id: true, username: true, email: true },
     });
 
     res.json({
       success: true,
       users,
-      count: users.length,
     });
   } catch (error) {
     next(error);

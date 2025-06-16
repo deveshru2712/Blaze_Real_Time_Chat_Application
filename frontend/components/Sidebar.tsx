@@ -4,7 +4,7 @@ import MessageBox from "./MessageBox";
 import { Input } from "./ui/input";
 import SkeletonMessageBox from "./skeletons/SkeletonMessageBox";
 import { useRouter } from "next/navigation";
-import messageStore from "@/store/message.store";
+import searchStore from "@/store/search.store";
 
 export default function Sidebar() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function Sidebar() {
     isSearching,
     setSearchUsername,
     setReceiverUser,
-  } = messageStore();
+  } = searchStore();
 
   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

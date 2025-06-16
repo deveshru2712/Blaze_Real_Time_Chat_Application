@@ -2,10 +2,10 @@
 import Message from "@/components/Message";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
-import messageStore from "@/store/message.store";
+import searchStore from "@/store/search.store";
 
 export default function Page() {
-  const { receiverUser } = messageStore();
+  const { receiverUser } = searchStore();
   if (!receiverUser) {
     return null;
   }

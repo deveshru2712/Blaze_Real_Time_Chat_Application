@@ -10,11 +10,11 @@ export default function MessageBubble({
 
   return (
     <div
-      className={`flex ${isMine ? "justify-start" : "justify-end"} mb-6 px-4`}
+      className={`flex ${isMine ? "justify-end" : " justify-start"} mb-6 px-4`}
     >
       <div
         className={`flex items-end gap-3 max-w-[70%] ${
-          isMine ? "flex-row" : "flex-row-reverse"
+          isMine ? "flex-row-reverse" : " flex-row"
         }`}
       >
         {/* Avatar */}
