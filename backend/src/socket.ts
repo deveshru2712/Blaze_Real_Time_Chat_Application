@@ -6,7 +6,12 @@ import { redisClient } from "./utils/redis/redisClient";
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  cors: { origin: env.CLIENT_URL },
+  cors: {
+    origin: env.CLIENT_URL,
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  },
 });
 
 // adding a middleware to check if redis is up or not
