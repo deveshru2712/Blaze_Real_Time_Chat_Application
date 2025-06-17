@@ -75,9 +75,10 @@ export default function Message({ User }: MessageProps) {
 
   return (
     <div className="h-full flex flex-col mx-6 py-4">
-      <div className="flex-1 flex flex-col gap-1 overflow-y-auto">
-        {User && <MessageNav user={User} />}
-
+      <div className="flex-1 flex flex-col gap-1 overflow-y-auto relative">
+        <div className="top-0 sticky bg-background">
+          {User && <MessageNav user={User} />}
+        </div>
         {/* Message bubbles */}
         {isPending && messageArr.length === 0 ? (
           // Initial loading state

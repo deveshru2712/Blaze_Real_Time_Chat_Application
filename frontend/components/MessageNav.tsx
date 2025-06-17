@@ -3,7 +3,7 @@ import React from "react";
 
 const MessageNav = ({ user: { username } }: MessageNavProps) => {
   return (
-    <div className="w-full px-4 py-2 h-14 border border-b rounded-2xl mb-5 top-0 relative">
+    <div className="w-full px-4 py-2 h-14 border border-b rounded-2xl mb-5">
       <div className="flex items-center h-full">
         <div className="flex items-center gap-3">
           <Image

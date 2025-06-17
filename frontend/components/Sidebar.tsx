@@ -15,6 +15,7 @@ export default function Sidebar() {
     isSearching,
     setSearchUsername,
     setReceiverUser,
+    hasSearched,
   } = searchStore();
 
   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -50,7 +51,9 @@ export default function Sidebar() {
         ))
       ) : (
         <div className="font-semibold text-center my-10">
-          Start messaging your friend...
+          {hasSearched
+            ? `No user found for ${searchUsername}`
+            : " Start messaging your friend..."}
         </div>
       )}
     </div>

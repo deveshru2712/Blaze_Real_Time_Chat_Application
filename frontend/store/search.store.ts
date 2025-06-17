@@ -9,6 +9,7 @@ const searchStore = create<SearchStore>((set, get) => ({
   searchUsername: "",
   isSearching: false,
   searchTimeout: null,
+  hasSearched: false,
   setReceiverUser: (user) => {
     set({ receiverUser: user });
   },
@@ -20,8 +21,6 @@ const searchStore = create<SearchStore>((set, get) => ({
     }
 
     set({
-      searchUsername: "",
-      userList: [],
       isSearching: false,
       searchTimeout: null,
     });
@@ -34,7 +33,7 @@ const searchStore = create<SearchStore>((set, get) => ({
       clearTimeout(searchTimeout);
     }
 
-    set({ searchUsername: username });
+    set({ searchUsername: username, hasSearched: false });
 
     if (!username.trim()) {
       set({ userList: [], isSearching: false, searchTimeout: null });
@@ -48,23 +47,16 @@ const searchStore = create<SearchStore>((set, get) => ({
         const response = await api(`/user`, {
           params: { username: username.trim() },
         });
-
         set({
           userList: response.data.users,
+          hasSearched: true,
           isSearching: false,
-          searchTimeout: null,
-          searchUsername: "",
         });
       } catch (error) {
-        set({
-          userList: [],
-          isSearching: false,
-          searchTimeout: null,
-          searchUsername: "",
-        });
-        console.log(error);
+        set({ userList: [], hasSearched: true, isSearching: false });
+        console.error(error);
       }
-    }, 500);
+    }, 1000);
 
     set({ searchTimeout: timeOut });
   },

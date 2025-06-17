@@ -27,8 +27,8 @@ declare global {
     id: string;
     participants: User[];
     messages?: Message[];
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: number;
+    updatedAt: number;
   }
 
   interface Message {
@@ -36,7 +36,7 @@ declare global {
     content: string;
     senderId: string;
     receiverId: string;
-    createdAt: string;
+    createdAt: number;
   }
 
   // component types
@@ -98,6 +98,7 @@ declare global {
     isSearching: boolean;
     receiverUser: User | null;
     searchUsername: string;
+    hasSearched: boolean;
     searchTimeout: NodeJS.Timeout | null;
   }
 

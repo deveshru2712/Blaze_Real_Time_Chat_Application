@@ -39,20 +39,48 @@ const messageStore = create<MessageStore>((set, get) => ({
   },
   sendMessage: async (receiverId, message, socket) => {
     const { messageArr } = get();
+    const { user } = authStore.getState();
+
+    if (!user) {
+      return;
+    }
+    const optimisticMessage: Message = {
+      id: `id-${Date.now()}`,
+      senderId: user.id,
+      content: message,
+      receiverId: receiverId,
+      createdAt: Date.now(),
+    };
+
     try {
       if (!socket) {
         throw new Error("Socket connection not available");
       }
 
+      // firstly setting the optimistic message
+      set({ messageArr: [...messageArr, optimisticMessage] });
       const response = await api.post(`/message/${receiverId}`, { message });
+
+      // when i receiver conformation i will replace it will the backend response one
 
       const savedMessage = response.data.message;
 
-      set({ messageArr: [...messageArr, savedMessage] });
+      const { messageArr: CurrentMessage } = get();
+
+      set({ messageArr: [...CurrentMessage, savedMessage] });
 
       socket.emit("send-message");
     } catch (error) {
       console.log(error);
+      // if it failed remove the message
+      const { messageArr: currentMessages } = get();
+      set({
+        messageArr: currentMessages.map((msg) =>
+          msg.id === optimisticMessage.id
+            ? { ...msg, status: "failed", error: true }
+            : msg
+        ),
+      });
     }
   },
 }));

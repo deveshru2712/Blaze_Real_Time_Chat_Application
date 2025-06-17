@@ -34,11 +34,11 @@ io.on("connection", async (socket) => {
     console.log("User connected:", socket.id);
   });
 
-  // for maintaining a active user list -> i am just refreshing it
-
   socket.on("heartbeat", async () => {
     await redisClient.expire(`active:${socket.id}`, 60);
   });
+
+  socket.on("send-message", () => {});
 
   socket.on("disconnect", async () => {
     await redisClient.del(`active:${socket.id}`);
