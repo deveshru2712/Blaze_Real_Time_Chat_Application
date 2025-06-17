@@ -1,37 +1,34 @@
 "use client";
-
 import Loader from "@/components/Loader";
 import authStore from "@/store/auth.store";
 import socketStore from "@/store/socket.store";
-import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import React, { useEffect, useRef } from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { user, isLoading, authCheck } = authStore();
   const { setSocket, isProcessing, disconnect } = socketStore();
   const router = useRouter();
+  const pathname = usePathname();
+  const hasInitialized = useRef(false);
 
-  // Initialize authentication and socket connection
   useEffect(() => {
+    if (hasInitialized.current) return;
+
     const initialize = async () => {
-      await authCheck();
+      hasInitialized.current = true;
+      await authCheck(router);
       setSocket();
-      return () => {
-        disconnect();
-      };
     };
+
     initialize();
-  }, [authCheck, setSocket, disconnect]);
 
-  // Redirect if unauthenticated
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.replace("/sign-in");
-    }
-  }, [user, isLoading, router]);
+    return () => {
+      disconnect();
+    };
+  }, [authCheck, disconnect, router, setSocket]);
 
-  // Show loader during initialization
-  if (isLoading || !user || isProcessing) {
+  if (isLoading || (!user && pathname !== "/sign-in") || isProcessing) {
     return (
       <div className="w-screen h-screen flex flex-col justify-center items-center gap-4">
         <Loader />

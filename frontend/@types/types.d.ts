@@ -1,6 +1,5 @@
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import type { Socket } from "socket.io-client";
-
-// added this cause the import statement was giving me error
 
 declare global {
   type FormType = "sign-in" | "sign-up";
@@ -74,7 +73,7 @@ declare global {
     signUp: (credentials: SignUpType) => Promise<void>;
     logIn: (credentials: SignInType) => Promise<void>;
     logOut: () => void;
-    authCheck: () => void;
+    authCheck: (route: AppRouterInstance) => void;
   }
 
   // socket store types

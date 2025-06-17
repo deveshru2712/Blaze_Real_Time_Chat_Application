@@ -4,7 +4,7 @@ import { create } from "zustand";
 
 type AuthStore = AuthStoreState & AuthStoreActions;
 
-const authStore = create<AuthStore>((set) => ({
+const authStore = create<AuthStore>((set, get) => ({
   user: null,
   isLoading: false,
   signUp: async (credentials) => {
@@ -18,12 +18,7 @@ const authStore = create<AuthStore>((set) => ({
       console.log(error);
       set({ isLoading: false, user: null });
 
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "Something went wrong";
-
-      toast.error(errorMessage);
+      toast.error("Unable to create an account");
     }
   },
   logIn: async (credentials) => {
@@ -36,12 +31,8 @@ const authStore = create<AuthStore>((set) => ({
     } catch (error) {
       console.log(error);
       set({ isLoading: false, user: null });
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "Something went wrong";
 
-      toast.error(errorMessage);
+      toast.error("Unable to login");
     }
   },
   logOut: async () => {
@@ -54,23 +45,47 @@ const authStore = create<AuthStore>((set) => ({
     } catch (error) {
       console.log(error);
       set({ isLoading: false });
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "Something went wrong";
 
-      toast.error(errorMessage);
+      toast.error("Unable to logout");
     }
   },
-  authCheck: async () => {
+  // authCheck: async () => {
+  //   set({ isLoading: true });
+  //   try {
+  //     const response = await api("/auth/verify");
+  //     set({ isLoading: false, user: response.data.user });
+  //     console.log("verified user", response.data.user);
+  //   } catch (error) {
+  //     console.log(error);
+  //     set({ isLoading: false, user: null });
+  //   }
+  // },
+  authCheck: async (router) => {
+    // Accept router as parameter
+    if (get().isLoading) return;
+
     set({ isLoading: true });
     try {
       const response = await api("/auth/verify");
       set({ isLoading: false, user: response.data.user });
+
+      const path = localStorage.getItem("redirectAfterAuth");
+      if (path && router) {
+        localStorage.removeItem("redirectAfterAuth");
+        router.push(path); // Use Next.js router instead of window.location.href
+      }
       console.log("verified user", response.data.user);
     } catch (error) {
       console.log(error);
       set({ isLoading: false, user: null });
+
+      if (typeof window !== "undefined" && router) {
+        const currentPath = window.location.pathname;
+        if (currentPath !== "/sign-in") {
+          localStorage.setItem("redirectAfterAuth", currentPath);
+          router.push("/sign-in"); // Use router.push instead of window.location.href
+        }
+      }
     }
   },
 }));
