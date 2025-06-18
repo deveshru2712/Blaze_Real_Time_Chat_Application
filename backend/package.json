@@ -1,11 +1,11 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "./dist/socket.js",
+  "main": "./dist/index.js",
   "scripts": {
-    "start": "node ./dist/socket.js",
+    "start": "node ./dist/index.js",
     "build": "tsc -b",
-    "dev": "nodemon ./src/socket.ts",
+    "dev": "nodemon ./src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

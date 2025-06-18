@@ -11,35 +11,35 @@ const searchStore = create<SearchStore>()(
       receiverUser: null,
       searchUsername: "",
       isSearching: false,
-      searchTimeout: null,
+      searchInterval: null,
       hasSearched: false,
       setReceiverUser: (user) => {
         set({ receiverUser: user });
       },
       // cleaning up the timeout
       clearSearch: () => {
-        const { searchTimeout } = get();
-        if (searchTimeout) {
-          clearTimeout(searchTimeout);
+        const { searchInterval } = get();
+        if (searchInterval) {
+          clearTimeout(searchInterval);
         }
 
         set({
           isSearching: false,
-          searchTimeout: null,
+          searchInterval: null,
         });
       },
       // for searching the user
       setSearchUsername: (username) => {
-        const { searchTimeout } = get();
+        const { searchInterval } = get();
 
-        if (searchTimeout) {
-          clearTimeout(searchTimeout);
+        if (searchInterval) {
+          clearTimeout(searchInterval);
         }
 
         set({ searchUsername: username, hasSearched: false });
 
         if (!username.trim()) {
-          set({ userList: [], isSearching: false, searchTimeout: null });
+          set({ userList: [], isSearching: false, searchInterval: null });
           return;
         }
 
@@ -47,7 +47,7 @@ const searchStore = create<SearchStore>()(
 
         const timeOut = setTimeout(async () => {
           try {
-            const response = await api(`/user`, {
+            const response = await api(`/api/user`, {
               params: { username: username.trim() },
             });
             set({
@@ -61,7 +61,7 @@ const searchStore = create<SearchStore>()(
           }
         }, 1000);
 
-        set({ searchTimeout: timeOut });
+        set({ searchInterval: timeOut });
       },
     }),
     {

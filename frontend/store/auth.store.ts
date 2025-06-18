@@ -10,7 +10,7 @@ const authStore = create<AuthStore>((set, get) => ({
   signUp: async (credentials) => {
     set({ isLoading: true });
     try {
-      const response = await api.post(`/auth/sign-up`, credentials);
+      const response = await api.post(`/api/auth/sign-up`, credentials);
       console.log(response.data.newUser);
       set({ isLoading: false, user: response.data.newUser });
       toast.success(response.data.message + "🔥");
@@ -24,7 +24,7 @@ const authStore = create<AuthStore>((set, get) => ({
   logIn: async (credentials) => {
     set({ isLoading: true });
     try {
-      const response = await api.post("/auth/sign-in", credentials);
+      const response = await api.post("/api/auth/sign-in", credentials);
       console.log(response.data.user);
       set({ isLoading: false, user: response.data.user });
       toast.success(response.data.message + "🔥");
@@ -38,7 +38,7 @@ const authStore = create<AuthStore>((set, get) => ({
   logOut: async () => {
     set({ isLoading: true });
     try {
-      const response = await api.post("/auth/logout");
+      const response = await api.post("/api/auth/logout");
       console.log(response.data);
       set({ isLoading: false, user: null });
       toast.success(response.data.message);
@@ -66,7 +66,7 @@ const authStore = create<AuthStore>((set, get) => ({
 
     set({ isLoading: true });
     try {
-      const response = await api("/auth/verify");
+      const response = await api("/api/auth/verify");
       set({ isLoading: false, user: response.data.user });
 
       const path = localStorage.getItem("redirectAfterAuth");

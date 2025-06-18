@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { MessageType } from "../utils/schema/messageSchema";
 import prismaClient from "../utils/prismaClient";
-import io from "../socket";
+import { io } from "../socket";
 import { redisClient } from "../utils/redis/redisClient";
 
 export const getMessage: RequestHandler<
@@ -147,6 +147,8 @@ export const sendMessage: RequestHandler<
       redisClient.get(`user:${receiverId}`),
     ]);
 
+    console.log(senderSocketId, receiverSocketId);
+
     if (senderSocketId) {
       io.to(senderSocketId).socketsJoin(transaction.conversation.id);
     }
@@ -161,6 +163,11 @@ export const sendMessage: RequestHandler<
       receiverId: transaction.message.receiverId,
       createdAt: transaction.message.createdAt,
     };
+
+    console.log(`Joining room ${transaction.conversation.id} for users:`, {
+      senderSocketId,
+      receiverSocketId,
+    });
 
     io.to(transaction.conversation.id).emit("receive-message", messageData);
 

@@ -26,7 +26,7 @@ const messageStore = create<MessageStore>((set, get) => ({
   fetchingMessage: async (receiverId) => {
     set({ isPending: true });
     try {
-      const response = await api(`/message/${receiverId}`);
+      const response = await api(`/api/message/${receiverId}`);
 
       set({
         messageArr: response.data.result || [],
@@ -59,7 +59,9 @@ const messageStore = create<MessageStore>((set, get) => ({
 
       // firstly setting the optimistic message
       set({ messageArr: [...messageArr, optimisticMessage] });
-      const response = await api.post(`/message/${receiverId}`, { message });
+      const response = await api.post(`/api/message/${receiverId}`, {
+        message,
+      });
 
       // when i receiver conformation i will replace it will the backend response one
 

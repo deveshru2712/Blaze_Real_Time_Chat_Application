@@ -22,14 +22,22 @@ const socketStore = create<SocketStore>((set, get) => ({
         set({ socket: null });
       }
 
-      const newSocket = io(process.env.NEXT_PUBLIC_BACKEND_URL);
+      const newSocket = io(process.env.NEXT_PUBLIC_BACKEND_URL, {
+        transports: ["websocket", "polling"],
+        timeout: 5000,
+        forceNew: true,
+      });
 
-      if (user) {
-        // calling the register function
-        newSocket.emit("register", user.id);
-        set({ socket: newSocket, isProcessing: false });
-        toast.success("User online 🔥");
-      }
+      newSocket.on("connect", () => {
+        console.log("Socket connected:", newSocket.id);
+
+        if (user) {
+          console.log("Emitting register for user:", user.id);
+          newSocket.emit("register-user", user.id);
+          set({ socket: newSocket, isProcessing: false });
+          toast.success("User online 🔥");
+        }
+      });
     } catch (error) {
       console.log("Unable to connect to the server", error);
       set({ isProcessing: false, socket: null });

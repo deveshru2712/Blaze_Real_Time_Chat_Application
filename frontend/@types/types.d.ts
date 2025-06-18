@@ -98,7 +98,7 @@ declare global {
     receiverUser: User | null;
     searchUsername: string;
     hasSearched: boolean;
-    searchTimeout: NodeJS.Timeout | null;
+    searchInterval: NodeJS.Timeout | null;
   }
 
   interface SearchStoreActions {
