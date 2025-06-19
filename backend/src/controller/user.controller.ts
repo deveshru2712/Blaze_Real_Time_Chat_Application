@@ -25,8 +25,35 @@ export const searchUser: RequestHandler<
         },
         NOT: { id: currentUser },
       },
-
-      select: { id: true, username: true, email: true },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        conversations: {
+          where: {
+            participants: {
+              some: {
+                id: currentUser,
+              },
+            },
+          },
+          select: {
+            id: true,
+            messages: {
+              orderBy: {
+                createdAt: "desc",
+              },
+              take: 1,
+              select: {
+                id: true,
+                content: true,
+                createdAt: true,
+                senderId: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     res.json({

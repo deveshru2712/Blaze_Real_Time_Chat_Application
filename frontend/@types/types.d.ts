@@ -26,8 +26,8 @@ declare global {
     id: string;
     participants: User[];
     messages?: Message[];
-    createdAt: number;
-    updatedAt: number;
+    createdAt: Date;
+    updatedAt?: Date;
   }
 
   interface Message {
@@ -48,8 +48,8 @@ declare global {
     onClick: () => void;
     username: string;
     profileImg: string;
-    latestMessage?: string;
-    time?: string;
+    latestMessage: string;
+    time: Date | null;
   }
 
   interface MessageBubbleProps {

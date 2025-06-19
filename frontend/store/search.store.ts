@@ -50,6 +50,7 @@ const searchStore = create<SearchStore>()(
             const response = await api(`/api/user`, {
               params: { username: username.trim() },
             });
+
             set({
               userList: response.data.users,
               hasSearched: true,

@@ -1,12 +1,22 @@
 import Image from "next/image";
 import React from "react";
 import { useAppTheme } from "@/hooks/useTheme";
+import dayjs from "dayjs";
+
+// Define the props interface
+interface MessageBoxProps {
+  username: string;
+  profileImg?: string;
+  latestMessage: string;
+  time: Date | null;
+  onClick: () => void;
+}
 
 export default function MessageBox({
-  username = "user",
+  username,
   profileImg = "https://avatar.iran.liara.run/public",
-  time = "11:28AM",
-  latestMessage = "hii there",
+  latestMessage,
+  time,
   onClick,
 }: MessageBoxProps) {
   const { classes } = useAppTheme();
@@ -33,20 +43,29 @@ export default function MessageBox({
 
         <div className="w-full flex flex-col justify-center min-w-0">
           <div className="flex justify-between items-start">
-            <h2 className={`${classes.textPrimary} font-medium truncate`}>
-              {username}
-            </h2>
-            <span
-              className={`${classes.textSecondary} text-sm flex-shrink-0 ml-2 hidden md:block`}
-            >
-              {time}
-            </span>
-          </div>
+            <div>
+              <h2
+                className={`${classes.textPrimary} font-semibold text-lg truncate`}
+              >
+                {username}
+              </h2>
 
-          <div className={`${classes.textSecondary} text-sm mt-1 truncate`}>
-            {latestMessage && latestMessage.length > 35
-              ? `${latestMessage.slice(0, 35)}...`
-              : latestMessage || "No messages yet"}
+              <div
+                className={`${classes.textSecondary} font-medium text-base truncate`}
+              >
+                {latestMessage && latestMessage.length > 35
+                  ? `${latestMessage.slice(0, 35)}...`
+                  : latestMessage || "No messages yet"}
+              </div>
+            </div>
+            {time && (
+              <span
+                className={`${classes.textSecondary} text-sm flex-shrink-0 ml-2 hidden md:flex md:flex-col`}
+              >
+                {dayjs(time).format("MMM D, YYYY")}
+                <span>{dayjs(time).format("h:mm A")}</span>
+              </span>
+            )}
           </div>
         </div>
       </div>

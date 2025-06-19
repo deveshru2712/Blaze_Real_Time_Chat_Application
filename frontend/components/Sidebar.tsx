@@ -5,6 +5,7 @@ import { Input } from "./ui/input";
 import SkeletonMessageBox from "./skeletons/SkeletonMessageBox";
 import { useRouter } from "next/navigation";
 import searchStore from "@/store/search.store";
+import { getLatestMessage } from "@/lib/getLatestMessage";
 
 export default function Sidebar() {
   const router = useRouter();
@@ -13,9 +14,9 @@ export default function Sidebar() {
     searchUsername,
     userList,
     isSearching,
+    hasSearched,
     setSearchUsername,
     setReceiverUser,
-    hasSearched,
   } = searchStore();
 
   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -36,19 +37,23 @@ export default function Sidebar() {
       {isSearching ? (
         <SkeletonMessageBox />
       ) : userList.length > 0 ? (
-        userList.map((user) => (
-          <MessageBox
-            onClick={() => {
-              setReceiverUser(user);
-              router.push(`/message/${user.id}`);
-            }}
-            key={user.id}
-            profileImg={"https://avatar.iran.liara.run/public"}
-            username={user.username}
-            latestMessage="hii there"
-            time="11:29 AM"
-          />
-        ))
+        userList.map((user) => {
+          const result = getLatestMessage(user.conversations);
+
+          return (
+            <MessageBox
+              onClick={() => {
+                setReceiverUser(user);
+                router.push(`/message/${user.id}`);
+              }}
+              key={user.id}
+              profileImg={"https://avatar.iran.liara.run/public"}
+              username={user.username}
+              latestMessage={result.latestMessage}
+              time={result.time}
+            />
+          );
+        })
       ) : (
         <div className="font-semibold text-center my-10">
           {hasSearched
