@@ -4,9 +4,6 @@ export const getLatestMessage = (conversationArr?: Conversation[]) => {
     if (latestConversation && latestConversation.length > 0) {
       const message = latestConversation[0];
       const latestMessage = message.content;
-
-      console.log(latestMessage);
-
       const time = message.createdAt;
       return {
         latestMessage,

@@ -45,6 +45,7 @@ declare global {
   }
 
   interface MessageBoxProps {
+    id: string;
     onClick: () => void;
     username: string;
     profileImg: string;
@@ -79,9 +80,11 @@ declare global {
   // socket store types
 
   interface SocketStoreState {
+    onlineUser: string[];
     socket: Socket | null;
     isOnline: boolean;
     isProcessing: boolean;
+    searchOnlineUserInterval: NodeJS.Timeout | null;
     refreshInterval: NodeJS.Timeout | null;
   }
 
@@ -89,7 +92,9 @@ declare global {
     setSocket: () => void;
     disconnect: () => void;
     startHeartBeat: () => void;
-    clearRefreshInterval: () => void;
+    clearHeartBeatInterval: () => void;
+    getOnlineUser: () => void;
+    clearOnlineUserSearch: () => void;
   }
 
   // search store types

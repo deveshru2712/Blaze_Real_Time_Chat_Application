@@ -8,8 +8,10 @@ type SocketStore = SocketStoreState & SocketStoreActions;
 const socketStore = create<SocketStore>((set, get) => ({
   socket: null,
   isProcessing: false,
+  onlineUser: [],
   isOnline: false,
   refreshInterval: null,
+  searchOnlineUserInterval: null,
   setSocket: () => {
     set({ isProcessing: true });
     const { socket } = get();
@@ -71,7 +73,7 @@ const socketStore = create<SocketStore>((set, get) => ({
       console.log("Error occurred while updating the active status", error);
     }
   },
-  clearRefreshInterval: () => {
+  clearHeartBeatInterval: () => {
     const { refreshInterval } = get();
     if (refreshInterval) {
       clearInterval(refreshInterval);
@@ -92,6 +94,41 @@ const socketStore = create<SocketStore>((set, get) => ({
       console.log("Error occurred", error);
       set({ isProcessing: false, socket: null, isOnline: false });
     }
+  },
+  getOnlineUser: () => {
+    const { socket, searchOnlineUserInterval } = get();
+
+    if (socket && searchOnlineUserInterval) {
+      clearInterval(searchOnlineUserInterval);
+      // socket.off("request-online-users");
+    }
+
+    if (!socket) {
+      console.log("No socket connection");
+      return;
+    }
+
+    const fetchOnlineUser = () => {
+      socket.emit("request-online-users");
+
+      socket.on("online-users", (onlineUsers) => {
+        // console.log("Received online users:", onlineUsers);
+        set({ onlineUser: onlineUsers });
+      });
+    };
+    const interval = setInterval(() => {
+      fetchOnlineUser();
+    }, 10000);
+
+    set({ searchOnlineUserInterval: interval });
+  },
+  clearOnlineUserSearch: () => {
+    const { socket, searchOnlineUserInterval } = get();
+    if (searchOnlineUserInterval) {
+      clearInterval(searchOnlineUserInterval);
+    }
+    if (socket) socket.off("online-users");
+    set({ searchOnlineUserInterval: null });
   },
 }));
 

@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import env from "./utils/validateEnv";
 import { redisClient } from "./utils/redis/redisClient";
 import prismaClient from "./utils/prismaClient";
+import { getOnlineUser } from "./utils/getOnlineUser";
 
 export const app = express();
 
@@ -96,6 +97,12 @@ io.on("connection", async (socket) => {
 
   socket.on("send-message", () => {
     console.log(" Message event received from:", socket.id);
+  });
+
+  socket.on("request-online-users", async () => {
+    const result = await getOnlineUser();
+    // console.log("here is the result:", result);
+    socket.emit("online-users", result);
   });
 
   socket.on("disconnect", async () => {

@@ -46,6 +46,7 @@ export default function Sidebar() {
                 setReceiverUser(user);
                 router.push(`/message/${user.id}`);
               }}
+              id={user.id}
               key={user.id}
               profileImg={"https://avatar.iran.liara.run/public"}
               username={user.username}

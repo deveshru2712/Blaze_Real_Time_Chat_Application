@@ -6,6 +6,7 @@ export const themeClasses = {
     textSecondary: "text-slate-600",
     border: "border-slate-200/60",
     dots: {
+      red: "bg-red-600",
       blue: "bg-blue-400/60",
       purple: "bg-purple-400/50",
       emerald: "bg-emerald-400/70",
@@ -19,6 +20,7 @@ export const themeClasses = {
     textSecondary: "text-slate-300",
     border: "border-slate-600/50",
     dots: {
+      red: "bg-red-600",
       blue: "bg-blue-400/40",
       purple: "bg-purple-400/35",
       emerald: "bg-emerald-400/50",

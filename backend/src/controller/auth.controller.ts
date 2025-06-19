@@ -98,7 +98,7 @@ export const signIn: RequestHandler<
     }
 
     res.cookie("blazeToken", session.token, { ...session.cookieOption });
-    res.status(201).json({
+    res.status(200).json({
       user: { ...user, password: undefined },
       message: "Logged in successfully",
     });

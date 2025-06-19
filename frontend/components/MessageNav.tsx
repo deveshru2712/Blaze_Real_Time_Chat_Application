@@ -1,18 +1,56 @@
+"use client";
+import socketStore from "@/store/socket.store";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-const MessageNav = ({ user: { username } }: MessageNavProps) => {
+const MessageNav = ({ user: { username, id } }: MessageNavProps) => {
+  // <div className="w-full px-4 py-2 h-14 border border-b rounded-2xl mb-5">
+  //   <div className="flex items-center h-full">
+  //     <div className="flex items-center gap-3">
+  //       <Image
+  //         src="https://avatar.iran.liara.run/public"
+  //         alt="profile_image"
+  //         height={40}
+  //         width={40}
+  //         className="rounded-full"
+  //       />
+  //       <div className="text-lg font-medium cursor-pointer">{username}</div>
+  //     </div>
+  //   </div>
+  // </div>
+  const { onlineUser } = socketStore();
+
+  const [isOnline, setIsOnline] = useState(false);
+
+  useEffect(() => {
+    // Check if the current user is in the onlineUser array
+    const userIsOnline = onlineUser.includes(id);
+    setIsOnline(userIsOnline);
+
+    console.log("MessageNav online check:", {
+      onlineUsers: onlineUser,
+      currentUserId: id,
+      isOnline: userIsOnline,
+    });
+  }, [onlineUser, id]);
+
   return (
     <div className="w-full px-4 py-2 h-14 border border-b rounded-2xl mb-5">
       <div className="flex items-center h-full">
         <div className="flex items-center gap-3">
-          <Image
-            src="https://avatar.iran.liara.run/public"
-            alt="profile_image"
-            height={40}
-            width={40}
-            className="rounded-full"
-          />
+          <div className="relative">
+            <Image
+              src="https://avatar.iran.liara.run/public"
+              alt="profile_image"
+              height={40}
+              width={40}
+              className="rounded-full"
+            />
+            {/* Online status indicator */}
+            {isOnline && (
+              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full shadow-sm z-10" />
+            )}
+          </div>
           <div className="text-lg font-medium cursor-pointer">{username}</div>
         </div>
       </div>

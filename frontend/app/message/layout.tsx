@@ -7,7 +7,15 @@ import React, { useEffect, useRef } from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { user, isLoading, authCheck } = authStore();
-  const { setSocket, isProcessing, disconnect } = socketStore();
+  const {
+    socket,
+    setSocket,
+    isProcessing,
+    disconnect,
+    isOnline,
+    getOnlineUser,
+    startHeartBeat,
+  } = socketStore();
   const router = useRouter();
   const pathname = usePathname();
   const hasInitialized = useRef(false);
@@ -27,6 +35,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       disconnect();
     };
   }, [authCheck, disconnect, router, setSocket]);
+
+  useEffect(() => {
+    if (socket && isOnline) {
+      getOnlineUser();
+      startHeartBeat();
+    }
+  }, [getOnlineUser, startHeartBeat, isOnline, socket]);
 
   if (isLoading || (!user && pathname !== "/sign-in") || isProcessing) {
     return (
