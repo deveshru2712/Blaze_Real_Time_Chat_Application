@@ -31,12 +31,10 @@ export default function Message({ User }: MessageProps) {
     }
   }, [User?.id, fetchingMessage]);
 
-  // Socket message listener with proper cleanup
   useEffect(() => {
     if (!socket) return;
 
     const handleReceiveMessage = (messageData: Message) => {
-      // Check if message already exists to prevent duplicates
       if (!messageArr.some((msg) => msg.id === messageData.id)) {
         setMessageArr([...messageArr, messageData]);
       }
@@ -49,7 +47,7 @@ export default function Message({ User }: MessageProps) {
     };
   }, [socket, messageArr, setMessageArr]);
 
-  // Redirect if not authenticated
+  // Redirecting the user
   useEffect(() => {
     if (!currentUser) {
       router.replace("/sign-in");
@@ -64,7 +62,6 @@ export default function Message({ User }: MessageProps) {
 
     try {
       sendMessage(User.id, trimmedMessage, socket);
-      console.log(trimmedMessage);
       setMessage("");
     } catch (error) {
       console.error("Failed to send message:", error);
@@ -93,6 +90,7 @@ export default function Message({ User }: MessageProps) {
               key={msg.id}
               isMine={msg.senderId == currentUser.id}
               message={msg.content}
+              time={msg.createdAt}
             />
           ))
         ) : (

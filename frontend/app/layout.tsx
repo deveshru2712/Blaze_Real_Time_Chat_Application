@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import AnimatedBlobs from "@/components/Blob";
+import Blob from "@/components/Blob";
 import { Toaster } from "@/components/ui/sonner";
 
 const bricolage = Bricolage_Grotesque({
@@ -43,7 +43,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="h-screen w-screen fixed -z-50 pointer-events-none">
-            <AnimatedBlobs />
+            <Blob />
           </div>
 
           <div className="relative z-10 min-h-screen">{children}</div>

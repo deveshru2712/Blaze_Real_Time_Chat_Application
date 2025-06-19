@@ -35,7 +35,7 @@ declare global {
     content: string;
     senderId: string;
     receiverId: string;
-    createdAt: number;
+    createdAt: Date;
   }
 
   // component types
@@ -54,8 +54,8 @@ declare global {
 
   interface MessageBubbleProps {
     isMine: boolean;
-    message?: string;
-    time?: string;
+    message: string;
+    time: Date;
   }
 
   interface MessageNavProps {
@@ -80,6 +80,7 @@ declare global {
 
   interface SocketStoreState {
     socket: Socket | null;
+    isOnline: boolean;
     isProcessing: boolean;
     refreshInterval: NodeJS.Timeout | null;
   }

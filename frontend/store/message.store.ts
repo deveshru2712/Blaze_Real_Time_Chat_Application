@@ -51,7 +51,6 @@ const messageStore = create<MessageStore>((set, get) => ({
       receiverId: receiverId,
       createdAt: Date.now(),
     };
-
     try {
       if (!socket) {
         throw new Error("Socket connection not available");
@@ -74,7 +73,6 @@ const messageStore = create<MessageStore>((set, get) => ({
       socket.emit("send-message");
     } catch (error) {
       console.log(error);
-      // if it failed remove the message
       const { messageArr: currentMessages } = get();
       set({
         messageArr: currentMessages.map((msg) =>

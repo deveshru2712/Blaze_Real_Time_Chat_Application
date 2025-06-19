@@ -8,10 +8,11 @@ type SocketStore = SocketStoreState & SocketStoreActions;
 const socketStore = create<SocketStore>((set, get) => ({
   socket: null,
   isProcessing: false,
+  isOnline: false,
   refreshInterval: null,
   setSocket: () => {
     set({ isProcessing: true });
-    const { socket } = socketStore.getState();
+    const { socket } = get();
     const { user } = authStore.getState();
     try {
       if (user) {
@@ -19,7 +20,7 @@ const socketStore = create<SocketStore>((set, get) => ({
           // going to un-register using the socket id
           socket.disconnect();
         }
-        set({ socket: null });
+        set({ socket: null, isOnline: false });
       }
 
       const newSocket = io(process.env.NEXT_PUBLIC_BACKEND_URL, {
@@ -29,18 +30,18 @@ const socketStore = create<SocketStore>((set, get) => ({
       });
 
       newSocket.on("connect", () => {
-        console.log("Socket connected:", newSocket.id);
+        // console.log("Socket connected:", newSocket.id);
 
         if (user) {
-          console.log("Emitting register for user:", user.id);
+          // console.log("Emitting register for user:", user.id);
           newSocket.emit("register-user", user.id);
-          set({ socket: newSocket, isProcessing: false });
+          set({ socket: newSocket, isProcessing: false, isOnline: true });
           toast.success("User online 🔥");
         }
       });
     } catch (error) {
       console.log("Unable to connect to the server", error);
-      set({ isProcessing: false, socket: null });
+      set({ isProcessing: false, socket: null, isOnline: false });
       toast.error("User offline 💀");
     }
   },
@@ -53,37 +54,43 @@ const socketStore = create<SocketStore>((set, get) => ({
 
         // so that we can maintain active status
         const interval = setInterval(() => {
-          if (socket.connected) {
-            socket.emit("heartbeat");
+          if (socket && socket.connected) {
+            socket.emit("heartbeat", (response: any) => {
+              console.log("Response:", response);
+              set({ isOnline: true });
+            });
+          } else {
+            console.log("Socket is not connected");
+            set({ isOnline: false });
           }
         }, 50000);
 
-        set({ refreshInterval: interval });
+        set({ refreshInterval: interval, isProcessing: false });
       }
     } catch (error) {
-      console.log(error);
+      console.log("Error occurred while updating the active status", error);
     }
   },
   clearRefreshInterval: () => {
     const { refreshInterval } = get();
     if (refreshInterval) {
       clearInterval(refreshInterval);
-      set({ refreshInterval: null });
+      set({ refreshInterval: null, isOnline: false });
     }
   },
   disconnect: () => {
     set({ isProcessing: true });
     try {
-      const { socket } = socketStore.getState();
+      const { socket } = get();
 
       if (socket) {
         socket.disconnect();
       }
 
-      set({ isProcessing: false, socket: null });
+      set({ isProcessing: false, socket: null, isOnline: false });
     } catch (error) {
       console.log("Error occurred", error);
-      set({ isProcessing: false, socket: null });
+      set({ isProcessing: false, socket: null, isOnline: false });
     }
   },
 }));

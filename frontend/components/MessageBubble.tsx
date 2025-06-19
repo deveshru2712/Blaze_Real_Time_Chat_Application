@@ -1,12 +1,15 @@
 import React from "react";
 import { useAppTheme } from "@/hooks/useTheme";
+import dayjs from "dayjs";
 
 export default function MessageBubble({
   isMine,
   message,
-  time = "11:28 AM",
+  time,
 }: MessageBubbleProps) {
   const { classes } = useAppTheme();
+
+  const formattedTime = dayjs(time);
 
   return (
     <div
@@ -46,7 +49,7 @@ export default function MessageBubble({
               isMine ? "text-left" : " text-right"
             }`}
           >
-            {time}
+            {formattedTime.format("MMMM D, YYYY,  h:mm A")}
           </div>
         </div>
       </div>
