@@ -42,15 +42,16 @@ declare global {
 
   interface MessageProps {
     User: User;
+    conversationId: string;
   }
 
   interface MessageBoxProps {
     id: string;
-    onClick: () => void;
     username: string;
     profileImg: string;
     latestMessage: string;
     time: Date | null;
+    onClick: () => void;
   }
 
   interface MessageBubbleProps {
@@ -61,6 +62,7 @@ declare global {
 
   interface MessageNavProps {
     user: User;
+    isTyping: boolean;
   }
 
   // auth store types
@@ -83,6 +85,7 @@ declare global {
     onlineUser: string[];
     socket: Socket | null;
     isOnline: boolean;
+    isTyping: boolean;
     isProcessing: boolean;
     searchOnlineUserInterval: NodeJS.Timeout | null;
     refreshInterval: NodeJS.Timeout | null;
@@ -91,6 +94,7 @@ declare global {
   interface SocketStoreActions {
     setSocket: () => void;
     disconnect: () => void;
+    setIsTyping: (value: boolean) => void;
     startHeartBeat: () => void;
     clearHeartBeatInterval: () => void;
     getOnlineUser: () => void;

@@ -1,26 +1,14 @@
 "use client";
+import { useAppTheme } from "@/hooks/useTheme";
 import socketStore from "@/store/socket.store";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
-const MessageNav = ({ user: { username, id } }: MessageNavProps) => {
-  // <div className="w-full px-4 py-2 h-14 border border-b rounded-2xl mb-5">
-  //   <div className="flex items-center h-full">
-  //     <div className="flex items-center gap-3">
-  //       <Image
-  //         src="https://avatar.iran.liara.run/public"
-  //         alt="profile_image"
-  //         height={40}
-  //         width={40}
-  //         className="rounded-full"
-  //       />
-  //       <div className="text-lg font-medium cursor-pointer">{username}</div>
-  //     </div>
-  //   </div>
-  // </div>
+const MessageNav = ({ user: { username, id }, isTyping }: MessageNavProps) => {
   const { onlineUser } = socketStore();
 
   const [isOnline, setIsOnline] = useState(false);
+  const { classes } = useAppTheme();
 
   useEffect(() => {
     // Check if the current user is in the onlineUser array
@@ -51,7 +39,16 @@ const MessageNav = ({ user: { username, id } }: MessageNavProps) => {
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full shadow-sm z-10" />
             )}
           </div>
-          <div className="text-lg font-medium cursor-pointer">{username}</div>
+          <div>
+            <div className="text-lg font-medium cursor-pointer">{username}</div>
+            <div
+              className={`text-sm ${classes.textSecondary} ${
+                isTyping ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              typing...
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -9,9 +9,13 @@ const socketStore = create<SocketStore>((set, get) => ({
   socket: null,
   isProcessing: false,
   onlineUser: [],
+  isTyping: false,
   isOnline: false,
   refreshInterval: null,
   searchOnlineUserInterval: null,
+  setIsTyping: (value) => {
+    set({ isTyping: value });
+  },
   setSocket: () => {
     set({ isProcessing: true });
     const { socket } = get();

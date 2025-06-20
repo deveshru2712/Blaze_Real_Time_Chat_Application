@@ -105,6 +105,20 @@ io.on("connection", async (socket) => {
     socket.emit("online-users", result);
   });
 
+  socket.on(
+    "user-typing",
+    (data: { userId: string; conversationId: string }) => {
+      socket.to(data.conversationId).emit("user-typing-server", true);
+    }
+  );
+
+  socket.on(
+    "user-stop-typing",
+    (data: { userId: string; conversationId: string }) => {
+      socket.to(data.conversationId).emit("user-stop-typing-server", false);
+    }
+  );
+
   socket.on("disconnect", async () => {
     console.log(" User disconnected:", socket.id);
     try {

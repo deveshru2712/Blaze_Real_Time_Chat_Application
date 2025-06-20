@@ -3,7 +3,7 @@ import { Send } from "lucide-react";
 import { Input } from "./ui/input";
 import MessageBubble from "./MessageBubble";
 import SkeletonBubble from "./skeletons/SkeletonBubble";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import MessageNav from "./MessageNav";
 import messageStore from "@/store/message.store";
 import authStore from "@/store/auth.store";
@@ -20,9 +20,11 @@ export default function Message({ User }: MessageProps) {
     sendMessage,
     setMessageArr,
   } = messageStore();
-  const { socket } = socketStore();
+  const { socket, isTyping, setIsTyping } = socketStore();
   const { user: currentUser } = authStore();
   const router = useRouter();
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   // Fetch messages when user changes
   useEffect(() => {
@@ -54,6 +56,62 @@ export default function Message({ User }: MessageProps) {
     }
   }, [currentUser, router]);
 
+  useEffect(() => {
+    if (!inputRef.current || !socket) {
+      return;
+    }
+
+    const conversationId =
+      User?.conversations && User.conversations.length > 0
+        ? User.conversations[0].id
+        : null;
+
+    const handleKeyDown = () => {
+      if (conversationId)
+        socket.emit("user-typing", {
+          userId: currentUser?.id,
+          conversationId: conversationId,
+        });
+    };
+
+    const handleBlur = () => {
+      if (conversationId)
+        socket.emit("user-stop-typing", {
+          userId: currentUser?.id,
+          conversationId: conversationId,
+        });
+    };
+
+    const inputElement = inputRef.current;
+    inputElement.addEventListener("keydown", handleKeyDown);
+    inputElement.addEventListener("blur", handleBlur);
+
+    return () => {
+      inputElement.removeEventListener("keydown", handleKeyDown);
+      inputElement.removeEventListener("blur", handleBlur);
+    };
+  }, [User?.conversations, socket, currentUser?.id]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleUserTyping = (data: boolean) => {
+      setIsTyping(data);
+    };
+
+    const handleUserStopTyping = (data: boolean) => {
+      setIsTyping(data);
+    };
+
+    socket.on("user-typing-server", handleUserTyping);
+    socket.on("user-stop-typing-server", handleUserStopTyping);
+
+    return () => {
+      socket.off("user-typing", handleUserTyping);
+      socket.off("user-stop-typing", handleUserStopTyping);
+    };
+  }, [setIsTyping, socket]);
+
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const trimmedMessage = message.trim();
@@ -74,7 +132,7 @@ export default function Message({ User }: MessageProps) {
     <div className="h-full flex flex-col mx-6 py-4">
       <div className="flex-1 flex flex-col gap-1 overflow-y-auto relative">
         <div className="top-0 sticky bg-background">
-          {User && <MessageNav user={User} />}
+          {User && <MessageNav isTyping={isTyping} user={User} />}
         </div>
         {/* Message bubbles */}
         {isPending && messageArr.length === 0 ? (
@@ -88,7 +146,7 @@ export default function Message({ User }: MessageProps) {
           messageArr.map((msg) => (
             <MessageBubble
               key={msg.id}
-              isMine={msg.senderId == currentUser.id}
+              isMine={msg.senderId === currentUser.id}
               message={msg.content}
               time={msg.createdAt}
             />
@@ -118,6 +176,7 @@ export default function Message({ User }: MessageProps) {
           className="w-full flex items-center gap-1"
         >
           <Input
+            ref={inputRef}
             placeholder="Type here..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
