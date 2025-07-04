@@ -17,8 +17,7 @@ const genToken = (userId: string) => {
 
     const cookieOption: CookieOptions = {
       secure: env.NODE_ENV == "production",
-      path: "/",
-      sameSite: "strict",
+      sameSite: "none",
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     };

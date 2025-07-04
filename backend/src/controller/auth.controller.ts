@@ -90,7 +90,6 @@ export const signIn: RequestHandler<
 
     const session = genToken(user.id);
 
-    console.log(session);
     if (!session.success) {
       res.status(500).json({
         message: session.message,
