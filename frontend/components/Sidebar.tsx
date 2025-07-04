@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import MessageBox from "./MessageBox";
 import { Input } from "./ui/input";
 import SkeletonMessageBox from "./skeletons/SkeletonMessageBox";
@@ -23,6 +23,20 @@ export default function Sidebar() {
     e.preventDefault();
   };
 
+  const processedUserList = useMemo(() => {
+    if (!userList || userList.length === 0) return [];
+
+    return userList.map((user) => {
+      const result = getLatestMessage(user.conversations);
+      console.log(result);
+      return {
+        ...user,
+        latestMessage: result.latestMessage,
+        time: result.time,
+      };
+    });
+  }, [userList]);
+
   return (
     <div className="w-1/3 mt-5 h-screen border-r px-2 py-1 hidden md:flex md:flex-col gap-1">
       <form className="w-full flex items-center" onSubmit={onSubmitHandler}>
@@ -36,10 +50,8 @@ export default function Sidebar() {
 
       {isSearching ? (
         <SkeletonMessageBox />
-      ) : userList.length > 0 ? (
-        userList.map((user) => {
-          const result = getLatestMessage(user.conversations);
-
+      ) : processedUserList.length > 0 ? (
+        processedUserList.map((user) => {
           return (
             <MessageBox
               onClick={() => {
@@ -47,11 +59,11 @@ export default function Sidebar() {
                 router.push(`/message/${user.id}`);
               }}
               id={user.id}
-              key={user.id}
+              key={`${user.id}-${user.time}`}
               profileImg={user.profilePicture}
               username={user.username}
-              latestMessage={result.latestMessage}
-              time={result.time}
+              latestMessage={user.latestMessage}
+              time={user.time}
             />
           );
         })

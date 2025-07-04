@@ -26,15 +26,10 @@ export default function Navbar() {
         </div>
         <div>
           <div className="flex items-center gap-5">
-            {user ? (
+            {user && (
               <SettingsButton
                 className="opacity-100"
                 onClick={handleSettingsClick}
-              />
-            ) : (
-              <SettingsButton
-                className="opacity-0 pointer-events-none"
-                onClick={() => {}}
               />
             )}
             <Toggle />

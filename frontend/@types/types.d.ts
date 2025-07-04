@@ -117,6 +117,7 @@ declare global {
   }
 
   interface SearchStoreActions {
+    setUserList: (userList: User[]) => void;
     setReceiverUser: (user: User) => void;
     setSearchUsername: (receiverId: string) => void;
     clearSearch: () => void;

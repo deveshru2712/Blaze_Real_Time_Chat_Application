@@ -136,8 +136,8 @@ export const sendMessage: RequestHandler<
 
     res.status(201).json({
       success: true,
-      message: transaction.message.content,
-      conversationId: transaction.conversation.id,
+      message: transaction.message,
+      conversationId: transaction.conversation,
     });
 
     // joining the room

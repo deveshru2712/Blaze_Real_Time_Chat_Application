@@ -18,7 +18,6 @@ export default function MessageBox({
   const { onlineUser, socket } = socketStore();
   const [isOnline, setIsOnline] = useState(false);
 
-  console.log(profileImg);
   useEffect(() => {
     // Check online status whenever onlineUser changes
     const checkOnlineStatus = () => {
@@ -45,14 +44,14 @@ export default function MessageBox({
       <div
         className={`flex gap-5 inset-1.5 ${classes.cardBg} absolute z-10 rounded-md px-2 py-2 ${classes.border} border transition-all duration-300 group-hover:shadow-lg group-hover:shadow-blue-500/10`}
       >
-        <div className="relative">
+        <div className="relative flex-shrink-0">
           {profileImg ? (
             <Image
               src={profileImg}
               alt="profile-image"
-              height={48}
-              width={48}
-              className="object-cover rounded-full flex-shrink-0"
+              height={64}
+              width={64}
+              className="w-12 h-12 object-cover rounded-full"
             />
           ) : (
             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">

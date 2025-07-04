@@ -143,14 +143,19 @@ export default function Message({ User }: MessageProps) {
             <SkeletonBubble isMyMessage={false} />
           </>
         ) : messageArr.length > 0 ? (
-          messageArr.map((msg) => (
-            <MessageBubble
-              key={msg.id}
-              isMine={msg.senderId === currentUser.id}
-              message={msg.content}
-              time={msg.createdAt}
-            />
-          ))
+          messageArr.map((msg) => {
+            if (msg.content) {
+              return (
+                <MessageBubble
+                  key={msg.id}
+                  isMine={msg.senderId === currentUser.id}
+                  message={msg.content}
+                  time={msg.createdAt}
+                />
+              );
+            }
+            return null;
+          })
         ) : (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">

@@ -15,11 +15,11 @@ const MessageNav = ({ user: { username, id }, isTyping }: MessageNavProps) => {
     const userIsOnline = onlineUser.includes(id);
     setIsOnline(userIsOnline);
 
-    console.log("MessageNav online check:", {
-      onlineUsers: onlineUser,
-      currentUserId: id,
-      isOnline: userIsOnline,
-    });
+    // console.log("MessageNav online check:", {
+    //   onlineUsers: onlineUser,
+    //   currentUserId: id,
+    //   isOnline: userIsOnline,
+    // });
   }, [onlineUser, id]);
 
   return (

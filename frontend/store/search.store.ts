@@ -13,6 +13,9 @@ const searchStore = create<SearchStore>()(
       isSearching: false,
       searchInterval: null,
       hasSearched: false,
+      setUserList: (userList) => {
+        set({ userList: [...userList] });
+      },
       setReceiverUser: (user) => {
         set({ receiverUser: user });
       },
