@@ -48,7 +48,7 @@ export default function Sidebar() {
               }}
               id={user.id}
               key={user.id}
-              profileImg={"https://avatar.iran.liara.run/public"}
+              profileImg={user.profilePicture}
               username={user.username}
               latestMessage={result.latestMessage}
               time={result.time}

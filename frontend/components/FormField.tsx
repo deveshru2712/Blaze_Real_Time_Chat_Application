@@ -1,14 +1,32 @@
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import { FormControl, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
+import { User, Mail, Lock } from "lucide-react";
 
 interface FormFieldProps<T extends FieldValues> {
   control: Control<T>;
   name: Path<T>;
   label: string;
   placeholder: string;
-  type: "email" | "password" | "text";
+  type: "email" | "password" | "text" | "file";
 }
+
+const getIconByPlaceholder = (placeholder: string) => {
+  const lowerPlaceholder = placeholder.toLowerCase();
+
+  if (lowerPlaceholder.includes("email") || lowerPlaceholder.includes("mail")) {
+    return <Mail className="h-5 w-5 text-gray-400" />;
+  }
+
+  if (
+    lowerPlaceholder.includes("password") ||
+    lowerPlaceholder.includes("pass")
+  ) {
+    return <Lock className="h-5 w-5 text-gray-400" />;
+  }
+
+  return <User className="h-5 w-5 text-gray-400" />;
+};
 
 const FormField = <T extends FieldValues>({
   control,
@@ -24,16 +42,21 @@ const FormField = <T extends FieldValues>({
       <FormItem>
         <FormLabel className="text-lg font-semibold">{label}</FormLabel>
         <FormControl>
-          <Input
-            className={`p-3 text-lg font-semibold ${
-              fieldState.error
-                ? "border-red-500 focus:border-red-500 focus:ring-red-500"
-                : ""
-            }`}
-            placeholder={placeholder}
-            type={type}
-            {...field}
-          />
+          <div className="relative flex items-center">
+            <div className="absolute left-3 z-10">
+              {getIconByPlaceholder(placeholder)}
+            </div>
+            <Input
+              className={`pl-10 text-lg font-semibold ${
+                fieldState.error
+                  ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                  : ""
+              }`}
+              placeholder={placeholder}
+              type={type}
+              {...field}
+            />
+          </div>
         </FormControl>
         <FormMessage className="text-red-500 text-sm mt-1" />
         {fieldState.error && (

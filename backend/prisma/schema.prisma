@@ -21,6 +21,7 @@ model User {
   password        String
   sentMessages    Message[]      @relation("sentMessages")
   receivedMessages Message[]      @relation("receivedMessages")
+  profilePicture String?
   conversations   Conversation[] @relation("UserConversations")
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt

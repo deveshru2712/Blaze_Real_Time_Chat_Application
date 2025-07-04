@@ -26,6 +26,7 @@ const ProtectedRoute: RequestHandler = async (req, res, next) => {
         id: true,
         username: true,
         email: true,
+        profilePicture: true,
       },
     });
 

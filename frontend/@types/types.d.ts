@@ -20,6 +20,7 @@ declare global {
     username: string;
     email: string;
     conversations?: Conversation[];
+    profilePicture: string;
   }
 
   interface Conversation {
@@ -42,7 +43,11 @@ declare global {
 
   interface MessageProps {
     User: User;
-    conversationId: string;
+  }
+
+  interface SettingsButtonProps {
+    onClick: () => void;
+    className: string;
   }
 
   interface MessageBoxProps {
@@ -136,5 +141,24 @@ declare global {
     setMessage: (message: string) => void;
     setCurrentConversationId: (conversationId: string) => void;
     setMessageArr: (MessageArr: Message[]) => void;
+  }
+
+  type formValue = {
+    username?: string;
+    email?: string;
+    password: string;
+    profilePicture?: string;
+  };
+
+  // update store
+  interface updateStoreState {
+    formValue: formValue | null;
+    isUpdating: boolean;
+    isUploading: boolean;
+  }
+
+  interface updateStoreActions {
+    updateProfile: (formValue: formValue) => Promise<void>;
+    uploadImage: (file: File) => Promise<void>;
   }
 }

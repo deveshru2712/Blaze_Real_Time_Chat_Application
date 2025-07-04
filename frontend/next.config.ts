@@ -2,7 +2,20 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [new URL("https://avatar.iran.liara.run/public")],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "avatar.iran.liara.run",
+        port: "",
+        pathname: "/**",
+      },
+    ],
   },
   eslint: {
     ignoreDuringBuilds: true,

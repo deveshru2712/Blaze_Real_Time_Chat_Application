@@ -1,5 +1,8 @@
 import { RequestHandler } from "express";
 import prismaClient from "../utils/prismaClient";
+import bcrypt from "bcryptjs";
+import { updateBodyType } from "../utils/schema/updateSchema";
+import createHttpError from "http-errors";
 
 export const searchUser: RequestHandler<
   unknown,
@@ -29,6 +32,7 @@ export const searchUser: RequestHandler<
         id: true,
         username: true,
         email: true,
+        profilePicture: true,
         conversations: {
           where: {
             participants: {
@@ -59,6 +63,89 @@ export const searchUser: RequestHandler<
     res.json({
       success: true,
       users,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateUser: RequestHandler<
+  unknown,
+  unknown,
+  updateBodyType,
+  { userId: string }
+> = async (req, res, next) => {
+  const { userId } = req.query;
+  if (!userId) {
+    res.status(400).json({
+      success: false,
+      message: "Invalid userId",
+    });
+    return;
+  }
+
+  try {
+    const { username, password, email, profilePicture } = req.body;
+
+    const user = await prismaClient.user.findUnique({
+      where: { id: userId },
+      select: {
+        email: true,
+        username: true,
+        password: true,
+        profilePicture: true,
+      },
+    });
+
+    if (!user) {
+      throw createHttpError(400, "Unable to find the user");
+    }
+
+    const checkPassword = await bcrypt.compare(password, user.password);
+
+    if (!checkPassword) {
+      throw createHttpError(401, "Invalid credentials");
+    }
+
+    const updateData: Partial<{
+      username: string;
+      email: string;
+      profilePicture: string;
+    }> = {};
+
+    if (username && username != user.username) {
+      updateData.username = username.trim();
+    }
+    if (email && email != user.email) {
+      updateData.email = email.trim();
+    }
+    if (profilePicture && profilePicture != user.profilePicture) {
+      updateData.profilePicture = profilePicture.trim();
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      res.status(400).json({
+        success: false,
+        message: "No valid fields provided for update",
+      });
+      return;
+    }
+
+    const updateUser = await prismaClient.user.update({
+      where: { id: userId },
+      data: updateData,
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        profilePicture: true,
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      data: updateUser,
     });
   } catch (error) {
     next(error);

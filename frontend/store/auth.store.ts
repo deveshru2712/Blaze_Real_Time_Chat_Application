@@ -52,6 +52,7 @@ const authStore = create<AuthStore>((set, get) => ({
     try {
       const response = await api("/api/auth/verify");
       set({ isLoading: false, user: response.data.user });
+      console.log(response.data.user);
 
       const path = localStorage.getItem("redirectAfterAuth");
       if (path && router) {
