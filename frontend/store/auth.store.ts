@@ -1,4 +1,5 @@
 import api from "@/utils/Axios";
+import { redirect } from "next/navigation";
 import { toast } from "sonner";
 import { create } from "zustand";
 
@@ -37,14 +38,14 @@ const authStore = create<AuthStore>((set, get) => ({
       const response = await api.post("/api/auth/logout");
       set({ isLoading: false, user: null });
       toast.success(response.data.message);
+      redirect("/");
     } catch (error) {
       console.log(error);
       set({ isLoading: false });
       toast.error("Unable to logout");
     }
   },
-  authCheck: async (router) => {
-    // Accept router as parameter
+  authCheck: async () => {
     const { isLoading } = get();
     if (isLoading) return;
 
@@ -52,24 +53,9 @@ const authStore = create<AuthStore>((set, get) => ({
     try {
       const response = await api("/api/auth/verify");
       set({ isLoading: false, user: response.data.user });
-      // console.log(response.data.user);
-
-      const path = localStorage.getItem("redirectAfterAuth");
-      if (path && router) {
-        localStorage.removeItem("redirectAfterAuth");
-        router.push(path);
-      }
     } catch (error) {
       console.log(error);
       set({ isLoading: false, user: null });
-
-      if (typeof window !== "undefined" && router) {
-        const currentPath = window.location.pathname;
-        if (currentPath !== "/sign-in") {
-          localStorage.setItem("redirectAfterAuth", currentPath);
-          router.push("/sign-in");
-        }
-      }
     }
   },
 }));

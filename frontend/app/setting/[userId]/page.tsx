@@ -19,7 +19,6 @@ import { z } from "zod";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import updateStore from "@/store/update.store";
-import { useRouter } from "next/navigation";
 
 export default function Page() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -61,7 +60,6 @@ export default function Page() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { user: currentUser, authCheck } = authStore();
   const { uploadImage, formValue } = updateStore();
-  const router = useRouter();
 
   // Set preview image from current user profile picture
   useEffect(() => {
@@ -85,7 +83,7 @@ export default function Page() {
   async function onSubmit(values: z.infer<typeof updateFormSchema>) {
     console.log(values);
     await updateProfile(values);
-    authCheck(router);
+    authCheck();
   }
 
   const handleProfilePictureClick = () => {
@@ -110,29 +108,29 @@ export default function Page() {
       <Navbar />
       <div className="flex flex-1 w-full border-t border-slate-200/60 overflow-hidden justify-center items-center">
         <Card className="w-full max-w-sm backdrop-blur-2xl">
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
+          <CardHeader className="text-center pb-3">
+            <div className="flex justify-center mb-2">
               <div className="relative">
-                <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                   {previewImage ? (
                     <Image
                       src={previewImage}
                       alt="Profile preview"
-                      width={80}
-                      height={80}
+                      width={64}
+                      height={64}
                       className="w-full h-full object-cover"
                       unoptimized
                     />
                   ) : (
-                    <User className="w-10 h-10 text-gray-400" />
+                    <User className="w-8 h-8 text-gray-400" />
                   )}
                 </div>
                 <button
                   type="button"
                   onClick={handleProfilePictureClick}
-                  className="absolute -bottom-1 -right-1 w-8 h-8 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center border-2 border-white"
+                  className="absolute -bottom-1 -right-1 w-6 h-6 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center border-2 border-white"
                 >
-                  <Camera className="w-4 h-4 text-white" />
+                  <Camera className="w-3 h-3 text-white" />
                 </button>
                 <input
                   type="file"
@@ -143,28 +141,30 @@ export default function Page() {
                 />
               </div>
             </div>
-            <CardTitle>Update your profile</CardTitle>
-            <CardDescription>Update your profile information</CardDescription>
+            <CardTitle className="text-lg">Update your profile</CardTitle>
+            <CardDescription className="text-sm">
+              Update your profile information
+            </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="py-3">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3">
                   {/* Current Values Display Section */}
-                  <div className="mb-4 p-3 bg-gray-50 rounded-lg border">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                  <div className="mb-2 p-2 dark:bg-gray-800/50 rounded-lg border">
+                    <h3 className="text-xs font-semibold dark:text-gray-200 mb-1">
                       Current Profile Information
                     </h3>
-                    <div className="space-y-2 text-sm">
+                    <div className="space-y-1 text-xs">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Username:</span>
-                        <span className="font-medium text-gray-800">
+                        <span className="dark:text-gray-300">Username:</span>
+                        <span className="font-medium dark:text-gray-200">
                           {currentUser.username || "Not set"}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Email:</span>
-                        <span className="font-medium text-gray-800">
+                        <span className="dark:text-gray-300">Email:</span>
+                        <span className="font-medium dark:text-gray-200">
                           {currentUser.email || "Not set"}
                         </span>
                       </div>
@@ -199,7 +199,7 @@ export default function Page() {
               </form>
             </Form>
           </CardContent>
-          <CardFooter className="flex-col gap-2">
+          <CardFooter className="pt-2">
             <Button
               type="submit"
               className="w-full"

@@ -1,4 +1,3 @@
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import type { Socket } from "socket.io-client";
 
 declare global {
@@ -46,7 +45,6 @@ declare global {
   }
 
   interface SettingsButtonProps {
-    onClick: () => void;
     className: string;
   }
 
@@ -81,7 +79,7 @@ declare global {
     signUp: (credentials: SignUpType) => Promise<void>;
     logIn: (credentials: SignInType) => Promise<void>;
     logOut: () => void;
-    authCheck: (route: AppRouterInstance) => void;
+    authCheck: () => void;
   }
 
   // socket store types

@@ -3,16 +3,10 @@ import Link from "next/link";
 import React from "react";
 import { Toggle } from "./Toggle";
 import { SettingsButton } from "./SettingButton";
-import { useRouter } from "next/navigation";
 import authStore from "@/store/auth.store";
 
 export default function Navbar() {
-  const router = useRouter();
   const { user } = authStore();
-
-  const handleSettingsClick = () => {
-    router.push(`/setting/${user?.id}`);
-  };
 
   return (
     <div className="w-full p-6 relative z-10">
@@ -27,10 +21,7 @@ export default function Navbar() {
         <div>
           <div className="flex items-center gap-5">
             {user && (
-              <SettingsButton
-                className="opacity-100"
-                onClick={handleSettingsClick}
-              />
+              <SettingsButton className="opacity-100 p-2 outline rounded-md" />
             )}
             <Toggle />
           </div>

@@ -59,13 +59,9 @@ export default function AuthForm({ type }: { type: FormType }) {
     }
 
     if (type == "sign-in") {
-      console.log("sign-in", values);
-
       await logIn(values);
       router.push("/message");
     } else {
-      console.log("sign-up", values);
-
       await signUp(
         values as { username: string; email: string; password: string }
       );
