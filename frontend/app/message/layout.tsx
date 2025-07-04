@@ -25,7 +25,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     const initialize = async () => {
       hasInitialized.current = true;
-      await authCheck(router);
+      await authCheck();
       setSocket();
     };
 

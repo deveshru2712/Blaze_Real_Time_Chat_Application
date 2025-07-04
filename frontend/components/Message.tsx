@@ -131,7 +131,7 @@ export default function Message({ User }: MessageProps) {
   return (
     <div className="h-full flex flex-col mx-6 py-4">
       <div className="flex-1 flex flex-col gap-1 overflow-y-auto relative">
-        <div className="top-0 sticky bg-background">
+        <div className="top-0 sticky bg-background px-4">
           {User && <MessageNav isTyping={isTyping} user={User} />}
         </div>
         {/* Message bubbles */}
@@ -175,7 +175,6 @@ export default function Message({ User }: MessageProps) {
 
       {/* Message input */}
       <div className="w-full mt-4">
-        <h2>currentUser:{currentUser.username}</h2>
         <form
           onSubmit={onSubmitHandler}
           className="w-full flex items-center gap-1"

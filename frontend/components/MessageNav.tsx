@@ -4,7 +4,10 @@ import socketStore from "@/store/socket.store";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
-const MessageNav = ({ user: { username, id }, isTyping }: MessageNavProps) => {
+const MessageNav = ({
+  user: { username, id, profilePicture },
+  isTyping,
+}: MessageNavProps) => {
   const { onlineUser } = socketStore();
 
   const [isOnline, setIsOnline] = useState(false);
@@ -26,13 +29,13 @@ const MessageNav = ({ user: { username, id }, isTyping }: MessageNavProps) => {
     <div className="w-full px-4 py-2 h-14 border border-b rounded-2xl mb-5">
       <div className="flex items-center h-full">
         <div className="flex items-center gap-3">
-          <div className="relative">
+          <div className="relative flex-shrink-0">
             <Image
-              src="https://avatar.iran.liara.run/public"
+              src={profilePicture || "https://avatar.iran.liara.run/public"}
               alt="profile_image"
               height={40}
               width={40}
-              className="rounded-full"
+              className="w-10 h-10 object-cover rounded-full"
             />
             {/* Online status indicator */}
             {isOnline && (

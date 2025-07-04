@@ -92,6 +92,10 @@ declare global {
     isProcessing: boolean;
     searchOnlineUserInterval: NodeJS.Timeout | null;
     refreshInterval: NodeJS.Timeout | null;
+    retryCount: number;
+    maxRetries: number;
+    retryDelay: number;
+    retryTimeout: NodeJS.Timeout | null;
   }
 
   interface SocketStoreActions {
@@ -102,6 +106,7 @@ declare global {
     clearHeartBeatInterval: () => void;
     getOnlineUser: () => void;
     clearOnlineUserSearch: () => void;
+    retryConnection: () => void;
   }
 
   // search store types

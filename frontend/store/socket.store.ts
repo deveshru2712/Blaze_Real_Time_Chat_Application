@@ -13,13 +13,20 @@ const socketStore = create<SocketStore>((set, get) => ({
   isOnline: false,
   refreshInterval: null,
   searchOnlineUserInterval: null,
+  retryCount: 0,
+  maxRetries: 3,
+  retryDelay: 1000,
+  retryTimeout: null,
+
   setIsTyping: (value) => {
     set({ isTyping: value });
   },
+
   setSocket: () => {
     set({ isProcessing: true });
-    const { socket } = get();
+    const { socket, retryCount, maxRetries } = get();
     const { user } = authStore.getState();
+
     try {
       if (user) {
         if (socket) {
@@ -36,14 +43,91 @@ const socketStore = create<SocketStore>((set, get) => ({
       });
 
       newSocket.on("connect", () => {
-        // console.log("Socket connected:", newSocket.id);
+        console.log("Socket connected:", newSocket.id);
 
         if (user) {
-          // console.log("Emitting register for user:", user.id);
+          console.log("Emitting register for user:", user.id);
           newSocket.emit("register-user", user.id);
-          set({ socket: newSocket, isProcessing: false, isOnline: true });
+          set({
+            socket: newSocket,
+            isProcessing: false,
+            isOnline: true,
+            retryCount: 0,
+          });
           toast.success("User online 🔥");
         }
+      });
+
+      newSocket.on("connect_error", (error) => {
+        console.log("Connection failed:", error);
+
+        if (retryCount < maxRetries) {
+          const newRetryCount = retryCount + 1;
+          set({ retryCount: newRetryCount });
+
+          const delay = get().retryDelay * Math.pow(2, newRetryCount - 1);
+          console.log(
+            `Retrying connection in ${delay}ms (attempt ${newRetryCount}/${maxRetries})`
+          );
+
+          toast.error(
+            `Connection failed. Retrying... (${newRetryCount}/${maxRetries})`
+          );
+
+          const retryTimeout = setTimeout(() => {
+            get().setSocket();
+          }, delay);
+
+          set({ retryTimeout });
+        } else {
+          console.log("Max retry attempts reached");
+          set({
+            isProcessing: false,
+            socket: null,
+            isOnline: false,
+            retryCount: 0,
+          });
+          toast.error("Unable to connect to server. Please try again later 💀");
+        }
+      });
+
+      newSocket.on("disconnect", (reason) => {
+        console.log("Disconnected:", reason);
+        set({ isOnline: false });
+
+        if (reason === "io server disconnect") {
+          // Server disconnected the socket, need to reconnect manually
+          toast.warning("Server disconnected. Attempting to reconnect...");
+          setTimeout(() => {
+            get().setSocket();
+          }, 1000);
+        } else if (
+          reason === "transport close" ||
+          reason === "transport error"
+        ) {
+          // Network issues, attempt to reconnect
+          toast.warning("Network issue detected. Attempting to reconnect...");
+          setTimeout(() => {
+            get().setSocket();
+          }, 2000);
+        }
+      });
+
+      newSocket.on("reconnect", (attemptNumber) => {
+        console.log("Reconnected after", attemptNumber, "attempts");
+        set({ isOnline: true, retryCount: 0 });
+        toast.success("Reconnected successfully 🔥");
+      });
+
+      newSocket.on("reconnect_error", (error) => {
+        console.log("Reconnection failed:", error);
+        set({ isOnline: false });
+      });
+
+      newSocket.on("reconnect_failed", () => {
+        console.log("Reconnection failed permanently");
+        set({ isOnline: false });
+        toast.error("Unable to reconnect to server 💀");
       });
     } catch (error) {
       console.log("Unable to connect to the server", error);
@@ -51,6 +135,7 @@ const socketStore = create<SocketStore>((set, get) => ({
       toast.error("User offline 💀");
     }
   },
+
   startHeartBeat: () => {
     set({ isProcessing: true });
     const { socket, refreshInterval } = get();
@@ -62,7 +147,7 @@ const socketStore = create<SocketStore>((set, get) => ({
         const interval = setInterval(() => {
           if (socket && socket.connected) {
             socket.emit("heartbeat", (response: any) => {
-              console.log("Response:", response);
+              console.log("Heartbeat response:", response);
               set({ isOnline: true });
             });
           } else {
@@ -75,8 +160,10 @@ const socketStore = create<SocketStore>((set, get) => ({
       }
     } catch (error) {
       console.log("Error occurred while updating the active status", error);
+      set({ isProcessing: false });
     }
   },
+
   clearHeartBeatInterval: () => {
     const { refreshInterval } = get();
     if (refreshInterval) {
@@ -84,27 +171,45 @@ const socketStore = create<SocketStore>((set, get) => ({
       set({ refreshInterval: null, isOnline: false });
     }
   },
+
   disconnect: () => {
     set({ isProcessing: true });
     try {
-      const { socket } = get();
+      const { socket, retryTimeout } = get();
+
+      // Clear any pending retry attempts
+      if (retryTimeout) {
+        clearTimeout(retryTimeout);
+        set({ retryTimeout: null });
+      }
 
       if (socket) {
         socket.disconnect();
       }
 
-      set({ isProcessing: false, socket: null, isOnline: false });
+      set({
+        isProcessing: false,
+        socket: null,
+        isOnline: false,
+        retryCount: 0,
+      });
     } catch (error) {
-      console.log("Error occurred", error);
-      set({ isProcessing: false, socket: null, isOnline: false });
+      console.log("Error occurred during disconnect", error);
+      set({
+        isProcessing: false,
+        socket: null,
+        isOnline: false,
+        retryCount: 0,
+      });
     }
   },
+
   getOnlineUser: () => {
     const { socket, searchOnlineUserInterval } = get();
 
     if (socket && searchOnlineUserInterval) {
       clearInterval(searchOnlineUserInterval);
-      // socket.off("request-online-users");
+      socket.off("online-users");
     }
 
     if (!socket) {
@@ -113,26 +218,47 @@ const socketStore = create<SocketStore>((set, get) => ({
     }
 
     const fetchOnlineUser = () => {
-      socket.emit("request-online-users");
-
-      socket.on("online-users", (onlineUsers) => {
-        // console.log("Received online users:", onlineUsers);
-        set({ onlineUser: onlineUsers });
-      });
+      if (socket && socket.connected) {
+        socket.emit("request-online-users");
+      }
     };
+
+    // Set up the event listener once
+    socket.on("online-users", (onlineUsers) => {
+      console.log("Received online users:", onlineUsers);
+      set({ onlineUser: onlineUsers });
+    });
+
+    // Initial fetch
+    fetchOnlineUser();
+
+    // Set up interval for periodic updates
     const interval = setInterval(() => {
       fetchOnlineUser();
     }, 10000);
 
     set({ searchOnlineUserInterval: interval });
   },
+
   clearOnlineUserSearch: () => {
     const { socket, searchOnlineUserInterval } = get();
     if (searchOnlineUserInterval) {
       clearInterval(searchOnlineUserInterval);
     }
-    if (socket) socket.off("online-users");
+    if (socket) {
+      socket.off("online-users");
+    }
     set({ searchOnlineUserInterval: null });
+  },
+
+  // Helper method to manually retry connection
+  retryConnection: () => {
+    const { retryTimeout } = get();
+    if (retryTimeout) {
+      clearTimeout(retryTimeout);
+    }
+    set({ retryCount: 0, retryTimeout: null });
+    get().setSocket();
   },
 }));
 

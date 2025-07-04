@@ -7,7 +7,7 @@ import searchStore from "@/store/search.store";
 export default function Page() {
   const { receiverUser } = searchStore();
   if (!receiverUser) {
-    return null;
+    return <div className="w-screen h-screen">No receiver user found.</div>;
   }
 
   return (
